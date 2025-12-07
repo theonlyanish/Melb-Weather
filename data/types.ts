@@ -7,6 +7,11 @@ export interface CurrentWeather {
   condition: string;
   humidity?: number;
   uvIndex?: number;
+  pressure?: number;
+  visibility?: number;
+  cloudCover?: number;
+  dewPoint?: number;
+  windGusts?: number;
 }
 
 export interface HourlyForecast {
@@ -14,6 +19,8 @@ export interface HourlyForecast {
   temp: number;
   condition: string;
   isPeak: boolean;
+  rainProb?: number;
+  windSpeed?: number;
 }
 
 export interface DailyForecast {
@@ -23,6 +30,11 @@ export interface DailyForecast {
   condition: string;
   rainProb: number;
   mood: string;
+  sunrise?: string;
+  sunset?: string;
+  precipitationSum?: number;
+  maxWindSpeed?: number;
+  maxWindGusts?: number;
 }
 
 export interface WeatherStory {
@@ -30,6 +42,12 @@ export interface WeatherStory {
   value: string;
   type: string;
   color: string;
+}
+
+export interface AirQuality {
+  aqi: number;
+  pm25: number;
+  pm10: number;
 }
 
 export interface CityData {
@@ -40,6 +58,7 @@ export interface CityData {
   hourly: HourlyForecast[];
   daily: DailyForecast[];
   stories: WeatherStory[];
+  airQuality?: AirQuality | null;
 }
 
 export interface WeatherData {

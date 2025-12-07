@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { Umbrella, AlertTriangle, Sun, Flame, Coffee, Droplets, CloudLightning, Waves, Sparkles, Shell, Thermometer } from "lucide-react";
+import { Umbrella, AlertTriangle, Sun, Flame, Coffee, Droplets, CloudLightning, Waves, Sparkles, Shell, Thermometer, Wind, Mountain, Sailboat, Gauge } from "lucide-react";
 import { WeatherStory } from "@/data/types";
 
 interface SidebarStoriesProps {
@@ -17,10 +17,14 @@ export default function SidebarStories({ stories, cityName = "Melbourne" }: Side
      if (title.includes("Coffee")) return <Coffee className="w-5 h-5" />;
      if (title.includes("Humidity")) return <Droplets className="w-5 h-5" />;
      if (title.includes("Storm")) return <CloudLightning className="w-5 h-5" />;
-     if (title.includes("River")) return <Waves className="w-5 h-5" />;
+     if (title.includes("River") || title.includes("Yarra")) return <Waves className="w-5 h-5" />;
      if (title.includes("Aurora")) return <Sparkles className="w-5 h-5" />;
-     if (title.includes("Fireplace")) return <Flame className="w-5 h-5" />;
+     if (title.includes("Fireplace") || title.includes("Fire")) return <Flame className="w-5 h-5" />;
      if (title.includes("Oyster")) return <Shell className="w-5 h-5" />;
+     if (title.includes("Surf")) return <Sailboat className="w-5 h-5" />;
+     if (title.includes("Hiking")) return <Mountain className="w-5 h-5" />;
+     if (title.includes("Air Quality")) return <Wind className="w-5 h-5" />;
+     if (title.includes("Pressure")) return <Gauge className="w-5 h-5" />;
      return <Thermometer className="w-5 h-5" />;
   };
 

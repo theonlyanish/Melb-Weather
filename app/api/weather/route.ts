@@ -23,11 +23,16 @@ export async function GET(request: Request) {
       daily: realWeatherData.daily,
       // Use dynamic stories from API, fallback to static if not available
       stories: realWeatherData.stories || cityStaticData?.stories || [],
+      airQuality: realWeatherData.airQuality,
     };
 
     return NextResponse.json(mergedData);
   } catch (error) {
     console.error("Error fetching weather data:", error);
+    // Log the full error for debugging
+    if (error instanceof Error) {
+      console.error("Error details:", error.message, error.stack);
+    }
     return NextResponse.json(
       { error: "Failed to fetch weather data" },
       { status: 500 }

@@ -1,8 +1,6 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 export function ThemeToggle() {
@@ -10,41 +8,70 @@ export function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Small timeout to avoid hydration mismatch
-    const timer = setTimeout(() => setMounted(true), 0);
-    return () => clearTimeout(timer);
+    setMounted(true);
   }, []);
 
   if (!mounted) return null;
 
+  const isDark = theme === "dark";
+
   return (
     <button
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 group"
+      className="dark-mode-toggle"
+      aria-label="Toggle theme"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
       title="Toggle theme"
     >
-      <div className="relative w-8 h-8 flex items-center justify-center bg-white dark:bg-slate-800 rounded-full shadow-sm border border-slate-200 dark:border-slate-700">
-          <motion.div
-            initial={false}
-            animate={{ rotate: theme === "dark" ? 180 : 0, scale: theme === "dark" ? 0 : 1 }}
-            transition={{ duration: 0.2 }}
-            className="absolute inset-0 flex items-center justify-center"
-          >
-            <Sun className="h-4 w-4 text-amber-500" />
-          </motion.div>
-          <motion.div
-            initial={false}
-            animate={{ rotate: theme === "dark" ? 0 : -180, scale: theme === "dark" ? 1 : 0 }}
-            transition={{ duration: 0.2 }}
-            className="flex items-center justify-center"
-          >
-            <Moon className="h-4 w-4 text-blue-400" />
-          </motion.div>
-      </div>
-      <span className="text-sm font-medium text-slate-600 dark:text-slate-300 hidden sm:block group-hover:text-slate-900 dark:group-hover:text-white transition-colors font-sans">
-          {theme === "dark" ? "Dark Mode" : "Light Mode"}
-      </span>
+      <svg
+        className={`dark-mode-toggle__icon ${isDark ? "dark-mode-toggle__icon--moon" : ""}`}
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+      >
+        <defs>
+          <mask id="mask">
+            <rect x="0" y="0" width="100%" height="100%" fill="white" />
+            <circle
+              className="dark-mode-toggle__cut-out"
+              r="6"
+              cx="24"
+              cy="10"
+              fill="black"
+            />
+          </mask>
+        </defs>
+        <circle
+          className="dark-mode-toggle__center-circle"
+          r="6"
+          cx="12"
+          cy="12"
+          fill="currentColor"
+          mask="url(#mask)"
+        />
+        <g
+          className="dark-mode-toggle__rays"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        >
+          <line x1="12" x2="12" y1="3" y2="1" />
+          <line x1="21" x2="23" y1="12" y2="12" />
+          <line x1="12" x2="12" y1="21" y2="23" />
+          <line x1="1" x2="3" y1="12" y2="12" />
+        </g>
+        <g
+          className="dark-mode-toggle__rays"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          transform="rotate(45 12 12)"
+        >
+          <line x1="12" x2="12" y1="3" y2="1" />
+          <line x1="21" x2="23" y1="12" y2="12" />
+          <line x1="12" x2="12" y1="21" y2="23" />
+          <line x1="1" x2="3" y1="12" y2="12" />
+        </g>
+      </svg>
     </button>
   );
 }
-

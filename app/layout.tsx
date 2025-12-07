@@ -28,13 +28,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${epilogue.variable} ${inter.variable} antialiased bg-slate-50 dark:bg-[#0D0E15] transition-colors duration-500 font-sans`}
+        className={`${epilogue.variable} ${inter.variable} antialiased font-sans`}
       >
         <ThemeProvider
             attribute="class"
             defaultTheme="light"
             enableSystem
-            disableTransitionOnChange
           >
             {children}
         </ThemeProvider>

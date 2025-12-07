@@ -34,9 +34,9 @@ export default function HourlyScroll({ data }: HourlyScrollProps) {
             whileHover={{ scale: 1.05, y: -5 }}
             className={`relative flex flex-col items-center justify-between p-4 rounded-3xl min-w-[100px] h-40 
              backdrop-blur-md border border-white/20 transition-all duration-300
-             dark:bg-[#15161E] dark:border-white/5 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.02)]
+             dark:bg-white/5 dark:border-white/10 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]
              ${hour.isPeak 
-                ? "bg-blue-50/40 dark:bg-blue-900/10 border-blue-200/50 dark:border-blue-500/10" 
+                ? "bg-blue-50/40 dark:bg-blue-900/20 border-blue-200/50 dark:border-blue-500/20" 
                 : "bg-white/30 border-white/40"}`}
           >
              {hour.isPeak && (

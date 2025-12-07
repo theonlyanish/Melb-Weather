@@ -69,38 +69,36 @@ export default function Home() {
     // Suburb changes don't affect weather data (same city)
   };
 
-  // Show loading state
-  if (loading || !cityData) {
-    return (
-      <main className="min-h-screen bg-slate-50 dark:bg-[#0D0E15] p-4 md:p-8 font-sans text-slate-900 dark:text-slate-100 relative overflow-hidden transition-colors duration-500 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
-          <p className="text-slate-600 dark:text-slate-400 font-sans">Loading weather data...</p>
-        </div>
-      </main>
-    );
-  }
-
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-[#0D0E15] p-4 md:p-8 font-sans text-slate-900 dark:text-slate-100 selection:bg-blue-100 dark:selection:bg-blue-900 relative overflow-hidden transition-colors duration-500">
+    <main className="min-h-screen p-4 md:p-8 font-sans text-slate-900 dark:text-slate-100 selection:bg-blue-100 dark:selection:bg-blue-900 relative overflow-hidden">
       {/* Noise Texture Overlay */}
-      <div className="fixed inset-0 opacity-5 pointer-events-none z-50 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 dark:brightness-50 mix-blend-overlay"></div>
+      <div className="fixed inset-0 opacity-5 pointer-events-none z-40 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 dark:brightness-50 mix-blend-overlay"></div>
 
       {/* Background Blobs for Liquid Effect */}
       <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-200/30 dark:bg-indigo-900/20 rounded-full blur-[120px] -z-10 animate-blob" />
       <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-[120px] -z-10 animate-blob animation-delay-2000" />
       <div className="fixed top-[20%] right-[20%] w-[40%] h-[40%] bg-yellow-100/30 dark:bg-blue-900/20 rounded-full blur-[120px] -z-10 animate-blob animation-delay-4000" />
 
-      <div className="max-w-7xl mx-auto space-y-8 relative z-10">
-        <header className="relative pt-4 pb-8">
-           {/* Theme Switcher - Absolute top left */}
-           <div className="absolute top-4 left-0 z-10">
-               <ThemeToggle />
-           </div>
+      {/* Theme Switcher - Fixed Top Left */}
+      <div className="fixed top-4 left-4 z-50 md:top-8 md:left-8">
+          <ThemeToggle />
+      </div>
+      
+      {/* Loading Overlay */}
+      {loading && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/50 dark:bg-black/50 backdrop-blur-sm transition-all duration-300">
+              <div className="flex flex-col items-center gap-4 p-8 rounded-3xl bg-white/80 dark:bg-slate-900/80 shadow-2xl border border-white/20">
+                <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
+                <p className="text-slate-600 dark:text-slate-300 font-medium animate-pulse">Fetching forecast...</p>
+              </div>
+          </div>
+      )}
 
+      <div className="max-w-7xl mx-auto space-y-8 relative z-10 pt-16 md:pt-4">
+        <header className="relative pb-8">
            {/* Main Header Content */}
-           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-12 md:pt-4">
-             <div className="space-y-2">
+           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-4">
+             <div className="space-y-2 pl-20 md:pl-0"> 
                {/* City Switcher */}
                <CitySwitcher 
                    cities={Object.keys(typedWeatherData.cities)} 
@@ -113,7 +111,7 @@ export default function Home() {
                </p>
              </div>
              
-             {cityData.suburbs.length > 0 && (
+             {!loading && cityData && cityData.suburbs.length > 0 && (
                <div className="md:self-end">
                   <SuburbSelector 
                   suburbs={cityData.suburbs} 
@@ -131,16 +129,23 @@ export default function Home() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Content - Always render previous content if available, or empty structure if first load */}
+        <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 transition-opacity duration-300 ${loading ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
           <div className="lg:col-span-2 space-y-8">
-            <Hero weather={cityData.current} microtext={cityData.microtext} />
-            <div className="glass-panel rounded-[2rem] p-2">
-                <HourlyScroll data={cityData.hourly} />
-            </div>
-            <WeekCards data={cityData.daily} />
+            {cityData ? (
+                <>
+                    <Hero weather={cityData.current} microtext={cityData.microtext} />
+                    <div className="glass-panel rounded-[2rem] p-2">
+                        <HourlyScroll data={cityData.hourly} />
+                    </div>
+                    <WeekCards data={cityData.daily} />
+                </>
+            ) : (
+                <div className="h-[600px]"></div> // Spacer for first load
+            )}
           </div>
           <div className="lg:col-span-1">
-            <SidebarStories stories={cityData.stories} cityName={cityData.name} />
+            {cityData && <SidebarStories stories={cityData.stories} cityName={cityData.name} />}
           </div>
         </div>
         
