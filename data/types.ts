@@ -5,6 +5,8 @@ export interface CurrentWeather {
   windSpeed: number;
   windDir: string;
   condition: string;
+  humidity?: number;
+  uvIndex?: number;
 }
 
 export interface HourlyForecast {

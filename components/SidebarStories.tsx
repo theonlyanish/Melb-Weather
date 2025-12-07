@@ -1,25 +1,32 @@
 "use client";
 import { motion } from "framer-motion";
-import { Umbrella, AlertTriangle, Sun, Flame, Coffee } from "lucide-react";
+import { Umbrella, AlertTriangle, Sun, Flame, Coffee, Droplets, CloudLightning, Waves, Sparkles, Shell, Thermometer } from "lucide-react";
 import { WeatherStory } from "@/data/types";
 
 interface SidebarStoriesProps {
   stories: WeatherStory[];
+  cityName?: string;
 }
 
-export default function SidebarStories({ stories }: SidebarStoriesProps) {
+export default function SidebarStories({ stories, cityName = "Melbourne" }: SidebarStoriesProps) {
   const getIcon = (title: string) => {
      if (title.includes("Umbrella")) return <Umbrella className="w-5 h-5" />;
      if (title.includes("Tram")) return <AlertTriangle className="w-5 h-5" />;
      if (title.includes("Beach")) return <Sun className="w-5 h-5" />;
-     if (title.includes("Sunburn")) return <Flame className="w-5 h-5" />;
+     if (title.includes("Sunburn") || title.includes("UV")) return <Flame className="w-5 h-5" />;
      if (title.includes("Coffee")) return <Coffee className="w-5 h-5" />;
-     return <Sun className="w-5 h-5" />;
+     if (title.includes("Humidity")) return <Droplets className="w-5 h-5" />;
+     if (title.includes("Storm")) return <CloudLightning className="w-5 h-5" />;
+     if (title.includes("River")) return <Waves className="w-5 h-5" />;
+     if (title.includes("Aurora")) return <Sparkles className="w-5 h-5" />;
+     if (title.includes("Fireplace")) return <Flame className="w-5 h-5" />;
+     if (title.includes("Oyster")) return <Shell className="w-5 h-5" />;
+     return <Thermometer className="w-5 h-5" />;
   };
 
   return (
     <div className="bg-white/80 dark:bg-[#15161E] backdrop-blur-xl rounded-[2rem] p-8 shadow-sm border border-slate-100 dark:border-white/5 h-full transition-colors duration-500">
-      <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-8 font-display">Melbourne Stories</h3>
+      <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-8 font-display">{cityName} Stories</h3>
       <div className="space-y-8">
         {stories.map((story, index) => (
           <motion.div 

@@ -1,6 +1,6 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cloud, Droplets, Wind } from "lucide-react";
+import { Cloud, Droplets, Wind, Thermometer } from "lucide-react";
 import { CurrentWeather } from "@/data/types";
 import { useEffect, useState } from "react";
 import { AnimatedSun, AnimatedCloud, AnimatedRain, AnimatedStorm, AnimatedSnow } from "./AnimatedIcons";
@@ -122,8 +122,8 @@ export default function Hero({ weather, microtext }: HeroProps) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mt-8 flex flex-wrap justify-center gap-6 md:gap-10 text-lg font-medium 
-            px-8 py-4 rounded-full 
+          className="mt-8 flex flex-wrap justify-center gap-4 md:gap-6 text-base md:text-lg font-medium 
+            px-6 md:px-8 py-4 rounded-full 
             bg-white/40 dark:bg-[#15161E] 
             text-slate-700 dark:text-slate-300 
             border border-white/30 dark:border-white/5 
@@ -134,6 +134,12 @@ export default function Hero({ weather, microtext }: HeroProps) {
           <span className="flex items-center gap-2"><Droplets className="w-5 h-5 opacity-70"/> {weather.chanceRain}%</span>
           <span className="opacity-30 dark:opacity-10">|</span>
           <span className="flex items-center gap-2"><Wind className="w-5 h-5 opacity-70"/> {weather.windSpeed}km/h {weather.windDir}</span>
+          {weather.humidity !== undefined && (
+            <>
+              <span className="opacity-30 dark:opacity-10">|</span>
+              <span className="flex items-center gap-2"><Thermometer className="w-5 h-5 opacity-70"/> {weather.humidity}% humidity</span>
+            </>
+          )}
         </motion.div>
 
         <AnimatePresence mode="wait">
