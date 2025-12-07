@@ -1,0 +1,190 @@
+{
+  "cities": {
+    "melbourne": {
+      "name": "Melbourne",
+      "suburbs": ["CBD", "Fitzroy", "St Kilda", "Southbank", "Richmond", "Docklands", "Carlton"],
+      "current": {
+        "temp": 18,
+        "feelsLike": 14,
+        "chanceRain": 40,
+        "windSpeed": 20,
+        "windDir": "SW",
+        "condition": "overcast"
+      },
+      "microtext": [
+        "Four seasons in one morning.",
+        "Bring a jacket. Always.",
+        "Rain? Sun? Both.",
+        "Umbrella recommended (you’ll probably lose it).",
+        "Standard Melbourne chaos.",
+        "Wait 5 minutes, it'll change."
+      ],
+      "hourly": [
+        { "time": "Now", "temp": 18, "condition": "cloudy", "isPeak": false },
+        { "time": "10 AM", "temp": 19, "condition": "sunny", "isPeak": false },
+        { "time": "11 AM", "temp": 21, "condition": "sunny", "isPeak": false },
+        { "time": "12 PM", "temp": 22, "condition": "cloudy", "isPeak": false },
+        { "time": "1 PM", "temp": 23, "condition": "rainy", "isPeak": false },
+        { "time": "2 PM", "temp": 20, "condition": "rainy", "isPeak": false },
+        { "time": "3 PM", "temp": 19, "condition": "cloudy", "isPeak": false },
+        { "time": "4 PM", "temp": 18, "condition": "cloudy", "isPeak": false },
+        { "time": "5 PM", "temp": 17, "condition": "cloudy", "isPeak": true },
+        { "time": "6 PM", "temp": 16, "condition": "cloudy", "isPeak": true },
+        { "time": "7 PM", "temp": 15, "condition": "clear", "isPeak": false }
+      ],
+      "daily": [
+        { "day": "Today", "high": 23, "low": 13, "condition": "rainy", "rainProb": 60, "mood": "gray" },
+        { "day": "Mon", "high": 19, "low": 11, "condition": "cloudy", "rainProb": 20, "mood": "blue" },
+        { "day": "Tue", "high": 25, "low": 14, "condition": "sunny", "rainProb": 0, "mood": "orange" },
+        { "day": "Wed", "high": 31, "low": 18, "condition": "hot", "rainProb": 0, "mood": "red" },
+        { "day": "Thu", "high": 20, "low": 12, "condition": "stormy", "rainProb": 80, "mood": "indigo" },
+        { "day": "Fri", "high": 18, "low": 10, "condition": "cloudy", "rainProb": 10, "mood": "blue" },
+        { "day": "Sat", "high": 22, "low": 13, "condition": "sunny", "rainProb": 0, "mood": "orange" }
+      ],
+      "stories": [
+        { "title": "Umbrella Index", "value": "7/10", "type": "bar", "color": "bg-blue-500" },
+        { "title": "Tram Delay Likelihood", "value": "Low", "type": "text", "color": "text-green-500" },
+        { "title": "Coffee Quality", "value": "11/10", "type": "bar", "color": "bg-amber-700" }
+      ]
+    },
+    "sydney": {
+      "name": "Sydney",
+      "suburbs": ["CBD", "Bondi", "Surry Hills", "Manly", "Newtown", "Parramatta"],
+      "current": {
+        "temp": 24,
+        "feelsLike": 26,
+        "chanceRain": 10,
+        "windSpeed": 15,
+        "windDir": "NE",
+        "condition": "sunny"
+      },
+      "microtext": [
+        "Beautiful one day, perfect the next.",
+        "Traffic is terrible, but look at the bridge.",
+        "Bondi is packed.",
+        "Ferry to Manly?",
+        "Watch out for the bin chickens."
+      ],
+      "hourly": [
+        { "time": "Now", "temp": 24, "condition": "sunny", "isPeak": false },
+        { "time": "10 AM", "temp": 25, "condition": "sunny", "isPeak": false },
+        { "time": "11 AM", "temp": 26, "condition": "sunny", "isPeak": false },
+        { "time": "12 PM", "temp": 27, "condition": "sunny", "isPeak": false },
+        { "time": "1 PM", "temp": 28, "condition": "sunny", "isPeak": false },
+        { "time": "2 PM", "temp": 27, "condition": "sunny", "isPeak": false },
+        { "time": "3 PM", "temp": 26, "condition": "cloudy", "isPeak": false },
+        { "time": "4 PM", "temp": 25, "condition": "cloudy", "isPeak": false },
+        { "time": "5 PM", "temp": 24, "condition": "cloudy", "isPeak": true },
+        { "time": "6 PM", "temp": 23, "condition": "clear", "isPeak": true },
+        { "time": "7 PM", "temp": 22, "condition": "clear", "isPeak": false }
+      ],
+      "daily": [
+        { "day": "Today", "high": 28, "low": 18, "condition": "sunny", "rainProb": 0, "mood": "orange" },
+        { "day": "Mon", "high": 29, "low": 19, "condition": "sunny", "rainProb": 0, "mood": "orange" },
+        { "day": "Tue", "high": 27, "low": 18, "condition": "cloudy", "rainProb": 10, "mood": "blue" },
+        { "day": "Wed", "high": 25, "low": 17, "condition": "rainy", "rainProb": 60, "mood": "gray" },
+        { "day": "Thu", "high": 26, "low": 18, "condition": "sunny", "rainProb": 0, "mood": "orange" },
+        { "day": "Fri", "high": 28, "low": 19, "condition": "sunny", "rainProb": 0, "mood": "orange" },
+        { "day": "Sat", "high": 30, "low": 20, "condition": "hot", "rainProb": 0, "mood": "red" }
+      ],
+      "stories": [
+        { "title": "Beach Day Score", "value": "10/10", "type": "bar", "color": "bg-yellow-500" },
+        { "title": "Bridge Climb", "value": "Open", "type": "text", "color": "text-blue-500" },
+        { "title": "Humidity", "value": "High", "type": "text", "color": "text-orange-400" }
+      ]
+    },
+    "brisbane": {
+      "name": "Brisbane",
+      "suburbs": ["CBD", "South Bank", "Fortitude Valley", "West End", "New Farm"],
+      "current": {
+        "temp": 29,
+        "feelsLike": 32,
+        "chanceRain": 20,
+        "windSpeed": 10,
+        "windDir": "E",
+        "condition": "hot"
+      },
+      "microtext": [
+        "Beautiful one day, perfect the next.",
+        "It's humid.",
+        "Riverfire anytime soon?",
+        "Bin chicken capital.",
+        "Sunny and humid."
+      ],
+      "hourly": [
+        { "time": "Now", "temp": 29, "condition": "hot", "isPeak": false },
+        { "time": "10 AM", "temp": 30, "condition": "hot", "isPeak": false },
+        { "time": "11 AM", "temp": 31, "condition": "hot", "isPeak": false },
+        { "time": "12 PM", "temp": 32, "condition": "hot", "isPeak": false },
+        { "time": "1 PM", "temp": 33, "condition": "stormy", "isPeak": false },
+        { "time": "2 PM", "temp": 30, "condition": "stormy", "isPeak": false },
+        { "time": "3 PM", "temp": 29, "condition": "rainy", "isPeak": false },
+        { "time": "4 PM", "temp": 28, "condition": "cloudy", "isPeak": false },
+        { "time": "5 PM", "temp": 27, "condition": "cloudy", "isPeak": true },
+        { "time": "6 PM", "temp": 26, "condition": "clear", "isPeak": true },
+        { "time": "7 PM", "temp": 25, "condition": "clear", "isPeak": false }
+      ],
+      "daily": [
+        { "day": "Today", "high": 33, "low": 22, "condition": "stormy", "rainProb": 40, "mood": "indigo" },
+        { "day": "Mon", "high": 31, "low": 21, "condition": "hot", "rainProb": 10, "mood": "red" },
+        { "day": "Tue", "high": 30, "low": 20, "condition": "sunny", "rainProb": 0, "mood": "orange" },
+        { "day": "Wed", "high": 32, "low": 22, "condition": "hot", "rainProb": 0, "mood": "red" },
+        { "day": "Thu", "high": 34, "low": 23, "condition": "stormy", "rainProb": 50, "mood": "indigo" },
+        { "day": "Fri", "high": 30, "low": 21, "condition": "cloudy", "rainProb": 20, "mood": "blue" },
+        { "day": "Sat", "high": 29, "low": 20, "condition": "sunny", "rainProb": 0, "mood": "orange" }
+      ],
+      "stories": [
+        { "title": "Humidity", "value": "99%", "type": "bar", "color": "bg-red-500" },
+        { "title": "Storm Risk", "value": "High", "type": "text", "color": "text-purple-500" },
+        { "title": "River Level", "value": "Normal", "type": "text", "color": "text-blue-500" }
+      ]
+    },
+    "tasmania": {
+      "name": "Tasmania",
+      "suburbs": ["Hobart", "Launceston", "Burnie", "Devonport", "Sandy Bay"],
+      "current": {
+        "temp": 12,
+        "feelsLike": 8,
+        "chanceRain": 30,
+        "windSpeed": 25,
+        "windDir": "S",
+        "condition": "cloudy"
+      },
+      "microtext": [
+        "Fresh Antarctic breeze.",
+        "Put another layer on.",
+        "Is that snow on the mountain?",
+        "Cleanest air in the world.",
+        "Winter is coming (always)."
+      ],
+      "hourly": [
+        { "time": "Now", "temp": 12, "condition": "cloudy", "isPeak": false },
+        { "time": "10 AM", "temp": 13, "condition": "cloudy", "isPeak": false },
+        { "time": "11 AM", "temp": 14, "condition": "sunny", "isPeak": false },
+        { "time": "12 PM", "temp": 15, "condition": "sunny", "isPeak": false },
+        { "time": "1 PM", "temp": 15, "condition": "rainy", "isPeak": false },
+        { "time": "2 PM", "temp": 14, "condition": "rainy", "isPeak": false },
+        { "time": "3 PM", "temp": 13, "condition": "cloudy", "isPeak": false },
+        { "time": "4 PM", "temp": 12, "condition": "windy", "isPeak": false },
+        { "time": "5 PM", "temp": 11, "condition": "windy", "isPeak": true },
+        { "time": "6 PM", "temp": 10, "condition": "clear", "isPeak": true },
+        { "time": "7 PM", "temp": 9, "condition": "clear", "isPeak": false }
+      ],
+      "daily": [
+        { "day": "Today", "high": 15, "low": 5, "condition": "cloudy", "rainProb": 30, "mood": "blue" },
+        { "day": "Mon", "high": 14, "low": 4, "condition": "rainy", "rainProb": 60, "mood": "gray" },
+        { "day": "Tue", "high": 16, "low": 6, "condition": "sunny", "rainProb": 0, "mood": "orange" },
+        { "day": "Wed", "high": 12, "low": 3, "condition": "snow", "rainProb": 40, "mood": "indigo" },
+        { "day": "Thu", "high": 13, "low": 4, "condition": "cloudy", "rainProb": 20, "mood": "blue" },
+        { "day": "Fri", "high": 15, "low": 5, "condition": "sunny", "rainProb": 0, "mood": "orange" },
+        { "day": "Sat", "high": 14, "low": 4, "condition": "windy", "rainProb": 10, "mood": "gray" }
+      ],
+      "stories": [
+        { "title": "Aurora Chance", "value": "Low", "type": "text", "color": "text-green-400" },
+        { "title": "Fireplace Index", "value": "9/10", "type": "bar", "color": "bg-orange-600" },
+        { "title": "Oyster Quality", "value": "Peak", "type": "text", "color": "text-teal-500" }
+      ]
+    }
+  }
+}
+

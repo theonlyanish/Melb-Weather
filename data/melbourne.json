@@ -1,0 +1,61 @@
+{
+  "suburbs": [
+    "Melbourne CBD",
+    "Fitzroy",
+    "St Kilda",
+    "Southbank",
+    "Richmond",
+    "Docklands",
+    "Carlton",
+    "Brunswick",
+    "South Yarra"
+  ],
+  "current": {
+    "temp": 18,
+    "feelsLike": 14,
+    "chanceRain": 40,
+    "windSpeed": 20,
+    "windDir": "SW",
+    "condition": "overcast"
+  },
+  "microtext": [
+    "Four seasons in one morning.",
+    "Bring a jacket. Always.",
+    "Rain? Sun? Both.",
+    "Umbrella recommended (you’ll probably lose it).",
+    "Standard Melbourne chaos.",
+    "Wait 5 minutes, it'll change."
+  ],
+  "hourly": [
+    { "time": "Now", "temp": 18, "condition": "cloudy", "isPeak": false },
+    { "time": "10 AM", "temp": 19, "condition": "sunny", "isPeak": false },
+    { "time": "11 AM", "temp": 21, "condition": "sunny", "isPeak": false },
+    { "time": "12 PM", "temp": 22, "condition": "cloudy", "isPeak": false },
+    { "time": "1 PM", "temp": 23, "condition": "rainy", "isPeak": false },
+    { "time": "2 PM", "temp": 20, "condition": "rainy", "isPeak": false },
+    { "time": "3 PM", "temp": 19, "condition": "cloudy", "isPeak": false },
+    { "time": "4 PM", "temp": 18, "condition": "cloudy", "isPeak": false },
+    { "time": "5 PM", "temp": 17, "condition": "cloudy", "isPeak": true },
+    { "time": "6 PM", "temp": 16, "condition": "cloudy", "isPeak": true },
+    { "time": "7 PM", "temp": 15, "condition": "clear", "isPeak": false },
+    { "time": "8 PM", "temp": 14, "condition": "clear", "isPeak": false },
+    { "time": "9 PM", "temp": 13, "condition": "clear", "isPeak": false }
+  ],
+  "daily": [
+    { "day": "Today", "high": 23, "low": 13, "condition": "rainy", "rainProb": 60, "mood": "gray" },
+    { "day": "Mon", "high": 19, "low": 11, "condition": "cloudy", "rainProb": 20, "mood": "blue" },
+    { "day": "Tue", "high": 25, "low": 14, "condition": "sunny", "rainProb": 0, "mood": "orange" },
+    { "day": "Wed", "high": 31, "low": 18, "condition": "hot", "rainProb": 0, "mood": "red" },
+    { "day": "Thu", "high": 20, "low": 12, "condition": "stormy", "rainProb": 80, "mood": "indigo" },
+    { "day": "Fri", "high": 18, "low": 10, "condition": "cloudy", "rainProb": 10, "mood": "blue" },
+    { "day": "Sat", "high": 22, "low": 13, "condition": "sunny", "rainProb": 0, "mood": "orange" }
+  ],
+  "stories": [
+    { "title": "Umbrella Index", "value": "7/10", "type": "bar", "color": "bg-blue-500" },
+    { "title": "Tram Delay Likelihood", "value": "Low", "type": "text", "color": "text-green-500" },
+    { "title": "Beach Day Score", "value": "3/10", "type": "bar", "color": "bg-yellow-500" },
+    { "title": "Sunburn Risk", "value": "Mild", "type": "text", "color": "text-orange-400" },
+    { "title": "Coffee Quality", "value": "11/10", "type": "bar", "color": "bg-amber-700" }
+  ]
+}
+
