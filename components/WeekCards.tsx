@@ -23,13 +23,14 @@ export default function WeekCards({ data }: WeekCardsProps) {
   };
 
   const getMoodColor = (mood: string) => {
+    // Subtler, cleaner colors for designer feel
     switch (mood) {
-      case "orange": return "bg-orange-50 text-orange-600 hover:bg-orange-100 border-orange-100";
-      case "blue": return "bg-blue-50 text-blue-600 hover:bg-blue-100 border-blue-100";
-      case "gray": return "bg-gray-50 text-gray-600 hover:bg-gray-100 border-gray-100";
-      case "red": return "bg-red-50 text-red-600 hover:bg-red-100 border-red-100";
-      case "indigo": return "bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-indigo-100";
-      default: return "bg-slate-50 text-slate-600 hover:bg-slate-100 border-slate-100";
+      case "orange": return "bg-orange-50/50 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400 hover:bg-orange-100/50 dark:hover:bg-orange-900/20 border-orange-100 dark:border-orange-900/20";
+      case "blue": return "bg-blue-50/50 dark:bg-blue-900/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100/50 dark:hover:bg-blue-900/20 border-blue-100 dark:border-blue-900/20";
+      case "gray": return "bg-slate-50/50 dark:bg-slate-800/30 text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 border-slate-100 dark:border-slate-800/30";
+      case "red": return "bg-red-50/50 dark:bg-red-900/10 text-red-600 dark:text-red-400 hover:bg-red-100/50 dark:hover:bg-red-900/20 border-red-100 dark:border-red-900/20";
+      case "indigo": return "bg-indigo-50/50 dark:bg-indigo-900/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100/50 dark:hover:bg-indigo-900/20 border-indigo-100 dark:border-indigo-900/20";
+      default: return "bg-slate-50/50 dark:bg-slate-800/30 text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 border-slate-100 dark:border-slate-800/30";
     }
   };
 
@@ -42,10 +43,10 @@ export default function WeekCards({ data }: WeekCardsProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
           whileHover={{ scale: 1.05, y: -5 }}
-          className={`flex flex-col items-center p-4 rounded-3xl cursor-pointer transition-all duration-300 border ${getMoodColor(day.mood)} shadow-sm`}
+          className={`flex flex-col items-center p-4 rounded-3xl cursor-pointer transition-all duration-300 border backdrop-blur-sm shadow-sm ${getMoodColor(day.mood)}`}
         >
           <span className="font-bold text-lg mb-2">{day.day}</span>
-          <div className="mb-3">
+          <div className="mb-3 scale-110">
              {getIcon(day.condition)}
           </div>
           <div className="flex gap-3 text-sm font-medium">
@@ -53,7 +54,7 @@ export default function WeekCards({ data }: WeekCardsProps) {
             <span className="opacity-50">{day.low}°</span>
           </div>
           {day.rainProb > 0 && (
-            <div className="mt-3 px-3 py-1 rounded-full bg-white/60 text-xs font-bold backdrop-blur-sm">
+            <div className="mt-3 px-3 py-1 rounded-full bg-white/60 dark:bg-black/20 text-xs font-bold backdrop-blur-sm">
               {day.rainProb}% Rain
             </div>
           )}

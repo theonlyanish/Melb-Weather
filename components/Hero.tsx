@@ -37,34 +37,35 @@ export default function Hero({ weather, microtext }: HeroProps) {
     }
   };
 
+  // More sophisticated, designer-friendly gradients
   const getGradient = (condition: string) => {
      switch (condition.toLowerCase()) {
        case "sunny": 
        case "clear":
        case "hot":
-         return "from-yellow-300/80 via-orange-200/80 to-blue-300/80";
+         // Warm amber to soft blue
+         return "from-amber-200 via-orange-100 to-sky-200 dark:from-amber-900/40 dark:via-orange-900/20 dark:to-slate-900";
        case "rainy": 
-         return "from-blue-400/80 via-blue-500/80 to-indigo-700/80";
+         // Deep blue to indigo
+         return "from-blue-300 via-indigo-300 to-slate-400 dark:from-blue-900/40 dark:via-indigo-900/30 dark:to-slate-900";
        case "stormy":
-          return "from-indigo-600/80 via-purple-700/80 to-slate-800/80";
+          // Purple to dark slate
+          return "from-indigo-400 via-purple-400 to-slate-600 dark:from-indigo-900/40 dark:via-purple-950/30 dark:to-slate-950";
        case "cloudy": 
        case "overcast":
-         return "from-gray-300/80 via-slate-300/80 to-slate-500/80";
+         // Silver to slate
+         return "from-gray-200 via-slate-200 to-zinc-300 dark:from-slate-800 dark:via-gray-900 dark:to-black";
         case "snow":
-            return "from-slate-100/90 via-blue-100/80 to-blue-200/80";
+            return "from-slate-100 via-sky-100 to-blue-100 dark:from-slate-800 dark:via-slate-900 dark:to-sky-950/30";
        default: 
-         return "from-blue-200/80 to-blue-400/80";
+         return "from-blue-200 to-blue-400 dark:from-blue-900/20 dark:to-slate-900";
      }
   };
 
-  const getTextColor = (condition: string) => {
-    switch (condition.toLowerCase()) {
-      case "rainy":
-      case "stormy":
-        return "text-white";
-      default:
-        return "text-slate-800";
-    }
+  const getTextColor = (/* condition: string */) => {
+    // In dark mode, we mostly want white text regardless, but in light mode, we might want contrast
+    // However, the new gradients are softer, so dark text usually works best in light mode
+    return "text-slate-800 dark:text-slate-100";
   };
 
   const textColor = getTextColor(weather.condition);
@@ -73,17 +74,20 @@ export default function Hero({ weather, microtext }: HeroProps) {
     <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
-      className={`relative w-full rounded-[3rem] p-8 md:p-12 overflow-hidden bg-gradient-to-br ${getGradient(weather.condition)} transition-all duration-1000 shadow-2xl backdrop-blur-3xl border border-white/20`}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} // Elegant ease
+      className={`relative w-full rounded-[3rem] p-8 md:p-12 overflow-hidden bg-gradient-to-br ${getGradient(weather.condition)} transition-all duration-1000 shadow-2xl backdrop-blur-3xl border border-white/20 dark:border-white/5 ring-1 ring-black/5 dark:ring-white/10`}
     >
-        {/* Liquid/Glass Shine */}
-        <div className="absolute inset-0 bg-white/10 opacity-50 pointer-events-none rounded-[3rem]" />
+        {/* Subtle Noise Texture on Hero Card */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
         
-      {/* Background Animation */}
+        {/* Liquid/Glass Shine */}
+        <div className="absolute inset-0 bg-white/10 dark:bg-white/5 opacity-50 pointer-events-none rounded-[3rem]" />
+        
+      {/* Background Animation - Floating Elements */}
       <motion.div 
         animate={{ x: [-20, 20, -20], y: [-10, 10, -10] }}
         transition={{ repeat: Infinity, duration: 10, ease: "easeInOut" }}
-        className="absolute top-0 right-0 opacity-30 pointer-events-none mix-blend-overlay"
+        className="absolute top-0 right-0 opacity-20 dark:opacity-10 pointer-events-none mix-blend-overlay"
       >
         <Cloud className="w-96 h-96 text-white" />
       </motion.div>
@@ -92,32 +96,35 @@ export default function Hero({ weather, microtext }: HeroProps) {
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2, type: "spring" }}
-          className="mb-4"
+          transition={{ delay: 0.2, type: "spring", stiffness: 100, damping: 20 }}
+          className="mb-8"
         >
           {getIcon(weather.condition)}
         </motion.div>
 
-        <motion.h1 
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, type: "spring", stiffness: 100 }}
-          className="text-9xl font-bold tracking-tighter"
+        {/* Minimalist, huge typography */}
+        <motion.div
+           initial={{ opacity: 0, scale: 0.9 }}
+           animate={{ opacity: 1, scale: 1 }}
+           transition={{ delay: 0.3, type: "spring", stiffness: 100 }}
+           className="relative"
         >
-          {weather.temp}°
-        </motion.h1>
+            <h1 className="text-[10rem] leading-none font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-slate-700 to-slate-900 dark:from-white dark:to-slate-400 drop-shadow-sm">
+            {weather.temp}°
+            </h1>
+        </motion.div>
         
         <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mt-6 flex flex-wrap justify-center gap-4 md:gap-8 text-lg font-medium glass-panel px-8 py-4 rounded-full text-current"
+          className="mt-8 flex flex-wrap justify-center gap-6 md:gap-10 text-lg font-medium glass-panel dark:glass-panel-dark px-8 py-4 rounded-full text-slate-700 dark:text-slate-200 border border-white/30 dark:border-white/10 shadow-lg dark:shadow-none"
         >
           <span>Feels like {weather.feelsLike}°</span>
-          <span className="opacity-50">|</span>
-          <span className="flex items-center gap-2"><Droplets className="w-5 h-5"/> {weather.chanceRain}%</span>
-          <span className="opacity-50">|</span>
-          <span className="flex items-center gap-2"><Wind className="w-5 h-5"/> {weather.windSpeed}km/h {weather.windDir}</span>
+          <span className="opacity-30 dark:opacity-20">|</span>
+          <span className="flex items-center gap-2"><Droplets className="w-5 h-5 opacity-70"/> {weather.chanceRain}%</span>
+          <span className="opacity-30 dark:opacity-20">|</span>
+          <span className="flex items-center gap-2"><Wind className="w-5 h-5 opacity-70"/> {weather.windSpeed}km/h {weather.windDir}</span>
         </motion.div>
 
         <AnimatePresence mode="wait">
@@ -128,7 +135,7 @@ export default function Hero({ weather, microtext }: HeroProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.5 }}
-              className="mt-8 text-xl font-serif italic opacity-80 max-w-lg"
+              className="mt-10 text-xl font-light italic opacity-70 max-w-lg tracking-wide"
             >
               “{displayText}”
             </motion.p>
