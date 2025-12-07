@@ -29,7 +29,7 @@ export default function SidebarStories({ stories, cityName = "Melbourne" }: Side
   };
 
   return (
-    <div className="bg-white/80 dark:bg-[#15161E] backdrop-blur-xl rounded-[2rem] p-8 shadow-sm border border-slate-100 dark:border-white/5 h-full transition-colors duration-500">
+    <div className="bg-white/80 dark:bg-[#15161E] backdrop-blur-xl rounded-[2rem] p-8 shadow-sm border border-slate-100 dark:border-white/5 h-full transition-colors duration-1000 theme-slow">
       <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-8 font-display">{cityName} Stories</h3>
       <div className="space-y-8">
         {stories.map((story, index) => (

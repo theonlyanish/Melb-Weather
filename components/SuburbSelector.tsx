@@ -20,7 +20,7 @@ export default function SuburbSelector({ suburbs, selectedSuburb, onSelect }: Su
         <button
           key={suburb}
           onClick={() => onSelect(suburb)}
-          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap ${
+          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-1000 theme-slow whitespace-nowrap ${
             selectedSuburb === suburb
               ? "bg-black dark:bg-white text-white dark:text-black shadow-lg scale-105"
               : "bg-white/50 dark:bg-slate-800/50 text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-slate-700 hover:text-black dark:hover:text-white"

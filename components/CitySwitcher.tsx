@@ -16,7 +16,7 @@ export default function CitySwitcher({ cities, selectedCity, onSelect }: CitySwi
     <div className="relative z-50">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 hover:opacity-80 transition-opacity font-display"
+        className="flex items-center gap-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 hover:opacity-80 transition-opacity duration-1000 theme-slow font-display"
       >
         {selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1)} Weather
         <motion.div

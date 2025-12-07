@@ -79,7 +79,7 @@ export default function Hero({ weather, microtext }: HeroProps) {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} // Elegant ease
-      className={`relative w-full rounded-[3rem] p-8 md:p-12 overflow-hidden ${getGradient(weather.condition)} transition-all duration-1000 shadow-2xl dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] border border-white/20 dark:border-white/5`}
+      className={`relative w-full rounded-[3rem] p-8 md:p-12 overflow-hidden ${getGradient(weather.condition)} transition-all duration-1000 theme-slow shadow-2xl dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] border border-white/20 dark:border-white/5`}
     >
         {/* Subtle Noise Texture on Hero Card - Keep for texture but reduce opacity in dark mode */}
         <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
@@ -127,7 +127,7 @@ export default function Hero({ weather, microtext }: HeroProps) {
             bg-white/40 dark:bg-[#15161E] 
             text-slate-700 dark:text-slate-300 
             border border-white/30 dark:border-white/5 
-            shadow-lg dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
+            shadow-lg dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] theme-slow"
         >
           <span className="flex items-center gap-2">Feels like <span className="font-bold">{weather.feelsLike}°</span></span>
           <span className="opacity-30 dark:opacity-10">|</span>
