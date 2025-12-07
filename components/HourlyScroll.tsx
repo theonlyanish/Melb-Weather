@@ -33,22 +33,22 @@ export default function HourlyScroll({ data }: HourlyScrollProps) {
             transition={{ delay: index * 0.05 }}
             whileHover={{ scale: 1.05, y: -5 }}
             className={`relative flex flex-col items-center justify-between p-4 rounded-3xl min-w-[100px] h-40 
-             backdrop-blur-md border border-white/20 shadow-sm transition-all duration-300
-             dark:border-white/5
+             backdrop-blur-md border border-white/20 transition-all duration-300
+             dark:bg-[#15161E] dark:border-white/5 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.02)]
              ${hour.isPeak 
-                ? "bg-blue-50/40 dark:bg-blue-900/20 border-blue-200/50 dark:border-blue-700/30" 
-                : "bg-white/30 dark:bg-slate-800/30 border-white/40"}`}
+                ? "bg-blue-50/40 dark:bg-blue-900/10 border-blue-200/50 dark:border-blue-500/10" 
+                : "bg-white/30 border-white/40"}`}
           >
              {hour.isPeak && (
                  <div className="absolute -top-3 bg-blue-500 text-white p-1.5 rounded-full shadow-md z-10" title="Peak Travel Time">
                      <TrainFront size={14} />
                  </div>
              )}
-             <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{hour.time}</span>
+             <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 font-sans">{hour.time}</span>
              <div className="my-auto drop-shadow-sm scale-110">
                 {getIcon(hour.condition, hour.time)}
              </div>
-             <span className="text-xl font-bold text-slate-800 dark:text-slate-200">{hour.temp}°</span>
+             <span className="text-xl font-bold text-slate-800 dark:text-slate-200 font-display">{hour.temp}°</span>
           </motion.div>
         ))}
       </div>

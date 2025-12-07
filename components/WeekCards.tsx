@@ -43,13 +43,13 @@ export default function WeekCards({ data }: WeekCardsProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
           whileHover={{ scale: 1.05, y: -5 }}
-          className={`flex flex-col items-center p-4 rounded-3xl cursor-pointer transition-all duration-300 border backdrop-blur-sm shadow-sm ${getMoodColor(day.mood)}`}
+          className={`flex flex-col items-center p-4 rounded-3xl cursor-pointer transition-all duration-300 border backdrop-blur-sm shadow-sm dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.02)] ${getMoodColor(day.mood)}`}
         >
-          <span className="font-bold text-lg mb-2">{day.day}</span>
+          <span className="font-bold text-lg mb-2 font-display">{day.day}</span>
           <div className="mb-3 scale-110">
              {getIcon(day.condition)}
           </div>
-          <div className="flex gap-3 text-sm font-medium">
+          <div className="flex gap-3 text-sm font-medium font-sans">
             <span className="opacity-90 font-bold">{day.high}°</span>
             <span className="opacity-50">{day.low}°</span>
           </div>

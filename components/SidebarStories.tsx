@@ -18,8 +18,8 @@ export default function SidebarStories({ stories }: SidebarStoriesProps) {
   };
 
   return (
-    <div className="bg-white/80 dark:bg-slate-900/50 backdrop-blur-xl rounded-[2rem] p-8 shadow-sm border border-slate-100 dark:border-white/5 h-full transition-colors duration-500">
-      <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-8">Melbourne Stories</h3>
+    <div className="bg-white/80 dark:bg-[#15161E] backdrop-blur-xl rounded-[2rem] p-8 shadow-sm border border-slate-100 dark:border-white/5 h-full transition-colors duration-500">
+      <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-8 font-display">Melbourne Stories</h3>
       <div className="space-y-8">
         {stories.map((story, index) => (
           <motion.div 
@@ -30,7 +30,7 @@ export default function SidebarStories({ stories }: SidebarStoriesProps) {
             className="flex flex-col gap-3"
           >
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 text-slate-600 dark:text-slate-300 font-medium">
+              <div className="flex items-center gap-3 text-slate-600 dark:text-slate-300 font-medium font-sans">
                 <div className={`p-2 rounded-full ${story.color.replace("bg-", "text-").replace("500", "600")} bg-opacity-10 dark:bg-opacity-20`}>
                    {getIcon(story.title)}
                 </div>

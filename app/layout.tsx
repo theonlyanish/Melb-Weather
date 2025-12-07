@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Epilogue, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const epilogue = Epilogue({
+  variable: "--font-epilogue",
   subsets: ["latin"],
+  weight: ["700", "900"], // Black or ExtraBold
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["400", "500", "600"], // Regular, Medium, SemiBold
 });
 
 export const metadata: Metadata = {
@@ -26,11 +28,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50 dark:bg-slate-950 transition-colors duration-500`}
+        className={`${epilogue.variable} ${inter.variable} antialiased bg-slate-50 dark:bg-[#0D0E15] transition-colors duration-500 font-sans`}
       >
         <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="light"
             enableSystem
             disableTransitionOnChange
           >
