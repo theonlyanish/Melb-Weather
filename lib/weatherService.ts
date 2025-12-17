@@ -1,8 +1,48 @@
 // City coordinates for Open-Meteo API
 export const CITY_COORDINATES: Record<string, { lat: number; lon: number; name: string; timezone: string }> = {
+  // Major Cities (Capital Cities)
   melbourne: { lat: -37.8136, lon: 144.9631, name: "Melbourne", timezone: "Australia/Melbourne" },
   sydney: { lat: -33.8688, lon: 151.2093, name: "Sydney", timezone: "Australia/Sydney" },
   brisbane: { lat: -27.4698, lon: 153.0251, name: "Brisbane", timezone: "Australia/Brisbane" },
+  hobart: { lat: -42.8821, lon: 147.3272, name: "Hobart", timezone: "Australia/Hobart" },
+  perth: { lat: -31.9505, lon: 115.8605, name: "Perth", timezone: "Australia/Perth" },
+  
+  // Victoria Regional Cities
+  ballarat: { lat: -37.5622, lon: 143.8503, name: "Ballarat", timezone: "Australia/Melbourne" },
+  bendigo: { lat: -36.7570, lon: 144.2794, name: "Bendigo", timezone: "Australia/Melbourne" },
+  geelong: { lat: -38.1499, lon: 144.3617, name: "Geelong", timezone: "Australia/Melbourne" },
+  mildura: { lat: -34.1889, lon: 142.1583, name: "Mildura", timezone: "Australia/Melbourne" },
+  shepparton: { lat: -36.3800, lon: 145.3983, name: "Shepparton", timezone: "Australia/Melbourne" },
+  
+  // NSW Regional Cities
+  newcastle: { lat: -32.9283, lon: 151.7817, name: "Newcastle", timezone: "Australia/Sydney" },
+  wollongong: { lat: -34.4278, lon: 150.8931, name: "Wollongong", timezone: "Australia/Sydney" },
+  "central coast": { lat: -33.3000, lon: 151.2167, name: "Central Coast", timezone: "Australia/Sydney" },
+  "blue mountains": { lat: -33.7000, lon: 150.3167, name: "Blue Mountains", timezone: "Australia/Sydney" },
+  canberra: { lat: -35.2809, lon: 149.1300, name: "Canberra", timezone: "Australia/Sydney" },
+  
+  // Queensland Regional Cities
+  "gold coast": { lat: -28.0167, lon: 153.4000, name: "Gold Coast", timezone: "Australia/Brisbane" },
+  "sunshine coast": { lat: -26.6500, lon: 153.0667, name: "Sunshine Coast", timezone: "Australia/Brisbane" },
+  toowoomba: { lat: -27.5598, lon: 151.9507, name: "Toowoomba", timezone: "Australia/Brisbane" },
+  cairns: { lat: -16.9186, lon: 145.7781, name: "Cairns", timezone: "Australia/Brisbane" },
+  townsville: { lat: -19.2590, lon: 146.8169, name: "Townsville", timezone: "Australia/Brisbane" },
+  
+  // Tasmania Regional Cities
+  launceston: { lat: -41.4332, lon: 147.1441, name: "Launceston", timezone: "Australia/Hobart" },
+  burnie: { lat: -41.0519, lon: 145.9022, name: "Burnie", timezone: "Australia/Hobart" },
+  devonport: { lat: -41.1789, lon: 146.3506, name: "Devonport", timezone: "Australia/Hobart" },
+  ulverstone: { lat: -41.1597, lon: 146.1689, name: "Ulverstone", timezone: "Australia/Hobart" },
+  kingston: { lat: -42.9758, lon: 147.3089, name: "Kingston", timezone: "Australia/Hobart" },
+  
+  // WA Regional Cities
+  fremantle: { lat: -32.0569, lon: 115.7439, name: "Fremantle", timezone: "Australia/Perth" },
+  mandurah: { lat: -32.5269, lon: 115.7214, name: "Mandurah", timezone: "Australia/Perth" },
+  bunbury: { lat: -33.3267, lon: 115.6397, name: "Bunbury", timezone: "Australia/Perth" },
+  albany: { lat: -35.0239, lon: 117.8839, name: "Albany", timezone: "Australia/Perth" },
+  geraldton: { lat: -28.7747, lon: 114.6153, name: "Geraldton", timezone: "Australia/Perth" },
+  
+  // Legacy support
   tasmania: { lat: -42.8821, lon: 147.3272, name: "Tasmania", timezone: "Australia/Hobart" },
 };
 
@@ -179,12 +219,13 @@ async function fetchMarineData(lat: number, lon: number): Promise<MarineData | n
 }
 
 export async function fetchWeatherData(cityKey: string) {
-  // Normalize key to lowercase to match our dictionary
-  const normalizedKey = cityKey.toLowerCase();
+  // Normalize key to lowercase and decode URI if needed
+  const normalizedKey = decodeURIComponent(cityKey).toLowerCase().trim();
   const city = CITY_COORDINATES[normalizedKey];
   
   if (!city) {
     console.error(`City not found for key: ${cityKey} (normalized: ${normalizedKey})`);
+    console.error(`Available cities:`, Object.keys(CITY_COORDINATES));
     // Fallback to Melbourne if city not found to prevent crashes
     const fallbackCity = CITY_COORDINATES["melbourne"];
     return fetchForCoordinates(fallbackCity, "melbourne");
@@ -259,13 +300,33 @@ async function fetchForCoordinates(city: { lat: number; lon: number; name: strin
   // Get current condition
   const currentCondition = WEATHER_CODE_MAP[current.weather_code] || "cloudy";
 
-  // Transform hourly data (next 12 hours)
-  const hourlyForecast = hourly.time.slice(0, 12).map((timeStr, index) => {
-    const time = new Date(timeStr);
-    const hour = time.getHours();
+  // Transform hourly data (next 24 hours)
+  // Find the index corresponding to the current hour
+  const now = new Date();
+  const currentHourStr = now.toISOString().slice(0, 13); // "YYYY-MM-DDTHH" - inaccurate for timezone matching
+  
+  // Better approach: Find the first time in the array that is in the future
+  // The API returns times in the requested timezone.
+  // We need to compare "now" (in matching timezone) with these times.
+  // Since we can't easily get "now" in target timezone without a library like date-fns-tz or moment-timezone,
+  // we'll rely on the API. Open-Meteo 'current' weather has a 'time' field.
+  // We can use that to find the starting index.
+  
+  const currentApiTime = new Date(current.time);
+  // Find index where time >= currentApiTime
+  let startIndex = hourly.time.findIndex(t => new Date(t) >= currentApiTime);
+  if (startIndex === -1) startIndex = 0;
+
+  const hourlyForecast = hourly.time.slice(startIndex, startIndex + 24).map((timeStr, index) => {
+    // Parse ISO string (e.g., "2023-11-22T00:00")
+    // Since it lacks timezone offset, new Date() treats it as local time (server time).
+    // getHours() will return the hour digit as is, which is what we want because the API already adjusted it to the target timezone.
+    const timeDate = new Date(timeStr);
+    const hour = timeDate.getHours();
     const isPeak = (hour >= 7 && hour <= 9) || (hour >= 17 && hour <= 19);
     
     let timeLabel = "Now";
+    // For the first item, show "Now", otherwise formatted hour
     if (index > 0) {
       if (hour === 0) timeLabel = "12 AM";
       else if (hour < 12) timeLabel = `${hour} AM`;
@@ -275,11 +336,11 @@ async function fetchForCoordinates(city: { lat: number; lon: number; name: strin
 
     return {
       time: timeLabel,
-      temp: Math.round(hourly.temperature_2m[index]),
-      condition: WEATHER_CODE_MAP[hourly.weather_code[index]] || "cloudy",
+      temp: Math.round(hourly.temperature_2m[startIndex + index]),
+      condition: WEATHER_CODE_MAP[hourly.weather_code[startIndex + index]] || "cloudy",
       isPeak,
-      rainProb: hourly.precipitation_probability?.[index] || 0,
-      windSpeed: Math.round(hourly.wind_speed_10m?.[index] || 0),
+      rainProb: hourly.precipitation_probability?.[startIndex + index] || 0,
+      windSpeed: Math.round(hourly.wind_speed_10m?.[startIndex + index] || 0),
     };
   });
 
@@ -654,7 +715,52 @@ function calculateDynamicStories(cityKey: string, weather: {
     });
   }
 
-  if (cityKey === "tasmania") {
+  if (cityKey === "perth") {
+    // Beach Perfect Index
+    let beachScore = 10;
+    if (weather.condition === "rainy" || weather.condition === "stormy") beachScore -= 5;
+    if (weather.temp < 18) beachScore -= 2;
+    if (weather.windSpeed > 35) beachScore -= 2;
+    if (weather.uvIndex > 11) beachScore -= 1;
+    beachScore = Math.max(0, Math.min(10, beachScore));
+    
+    stories.push({
+      title: "Beach Perfect",
+      value: beachScore >= 8 ? "Yes" : beachScore >= 5 ? "Maybe" : "No",
+      type: "text",
+      color: beachScore >= 8 ? "text-blue-500" : beachScore >= 5 ? "text-yellow-500" : "text-gray-500",
+    });
+
+    // Fremantle Doctor Wind (afternoon sea breeze)
+    const hour = new Date().getHours();
+    const isAfternoon = hour >= 12 && hour <= 18;
+    const isDoctorTime = isAfternoon && weather.windSpeed > 20 && weather.windSpeed < 40;
+    
+    stories.push({
+      title: "Fremantle Doctor",
+      value: isDoctorTime ? "Blowing" : isAfternoon ? "Expected" : "Later",
+      type: "text",
+      color: isDoctorTime ? "text-blue-500" : "text-gray-400",
+    });
+
+    // Isolation Level (Perth is the most isolated city on Earth)
+    stories.push({
+      title: "Isolation Level",
+      value: "Maximum",
+      type: "text",
+      color: "text-orange-500",
+    });
+
+    // Mining Boom Indicator (WA economy)
+    stories.push({
+      title: "Mining Boom",
+      value: "8/10",
+      type: "bar",
+      color: "bg-yellow-600",
+    });
+  }
+
+  if (cityKey === "tasmania" || cityKey === "hobart") {
     // Fireplace Index - based on temperature, wind, and humidity
     let fireplaceIndex = 0;
     if (weather.temp < 8) fireplaceIndex = 10;

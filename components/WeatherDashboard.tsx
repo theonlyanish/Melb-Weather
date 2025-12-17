@@ -1,42 +1,60 @@
 "use client";
 import { useState, useCallback, useTransition, memo } from "react";
-import SuburbSelector from "@/components/SuburbSelector";
+import RegionalCitySelector from "@/components/SuburbSelector";
 import Hero from "@/components/Hero";
 import HourlyScroll from "@/components/HourlyScroll";
 import WeekCards from "@/components/WeekCards";
 import SidebarStories from "@/components/SidebarStories";
 import CitySwitcher from "@/components/CitySwitcher";
-import { CityData } from "@/data/types";
+import { LocationData } from "@/data/types";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Loader2 } from "lucide-react";
 
 interface WeatherDashboardProps {
-  initialData: CityData | null;
+  initialData: LocationData | null;
   availableCities: string[];
   defaultCity: string;
+  regionalCities: string[];
 }
 
-function WeatherDashboard({ initialData, availableCities, defaultCity }: WeatherDashboardProps) {
-  const [selectedCityKey, setSelectedCityKey] = useState(defaultCity);
-  const [cityData, setCityData] = useState<CityData | null>(initialData);
-  const [selectedSuburb, setSelectedSuburb] = useState(initialData?.suburbs[0] || "");
+// Helper function to capitalize city names properly
+function capitalizeCityName(city: string): string {
+  return city
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+function WeatherDashboard({ initialData, availableCities, defaultCity, regionalCities }: WeatherDashboardProps) {
+  const [selectedMajorCity, setSelectedMajorCity] = useState(defaultCity);
+  const [locationData, setLocationData] = useState<LocationData | null>(initialData);
+  const [currentRegionalCities, setCurrentRegionalCities] = useState(regionalCities);
+  // Default to the major city itself (capitalized), not the first regional city
+  const [selectedRegionalCity, setSelectedRegionalCity] = useState(capitalizeCityName(defaultCity));
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  const handleCityChange = useCallback(async (city: string) => {
-    setSelectedCityKey(city);
+  const handleMajorCityChange = useCallback(async (majorCity: string) => {
+    setSelectedMajorCity(majorCity);
     setError(null);
     
     startTransition(async () => {
       try {
-        const response = await fetch(`/api/weather?city=${city.toLowerCase()}`);
+        // Fetch the major city data to get regional cities list
+        const stateResponse = await fetch(`/api/weather?city=${majorCity.toLowerCase()}&type=state`);
+        if (!stateResponse.ok) throw new Error("Failed to fetch state data");
+        
+        const stateData = await stateResponse.json();
+        setCurrentRegionalCities(stateData.regionalCities || []);
+        
+        // Fetch weather for the major city itself
+        const response = await fetch(`/api/weather?city=${majorCity.toLowerCase()}`);
         if (!response.ok) throw new Error("Failed to fetch");
         
-        const data: CityData = await response.json();
-        setCityData(data);
-        if (data.suburbs?.length > 0) {
-          setSelectedSuburb(data.suburbs[0]);
-        }
+        const data: LocationData = await response.json();
+        setLocationData(data);
+        // Set to capitalized major city name to match the regional cities format
+        setSelectedRegionalCity(capitalizeCityName(majorCity));
       } catch (err) {
         console.error("Error fetching weather:", err);
         setError("Failed to load weather data.");
@@ -44,8 +62,24 @@ function WeatherDashboard({ initialData, availableCities, defaultCity }: Weather
     });
   }, []);
 
-  const handleSuburbChange = useCallback((suburb: string) => {
-    setSelectedSuburb(suburb);
+  const handleRegionalCityChange = useCallback(async (regionalCity: string) => {
+    setSelectedRegionalCity(regionalCity);
+    setError(null);
+    
+    startTransition(async () => {
+      try {
+        // Normalize city name for API (lowercase, spaces preserved)
+        const cityParam = encodeURIComponent(regionalCity.toLowerCase());
+        const response = await fetch(`/api/weather?city=${cityParam}`);
+        if (!response.ok) throw new Error("Failed to fetch");
+        
+        const data: LocationData = await response.json();
+        setLocationData(data);
+      } catch (err) {
+        console.error("Error fetching weather:", err);
+        setError("Failed to load weather data.");
+      }
+    });
   }, []);
 
   return (
@@ -71,20 +105,20 @@ function WeatherDashboard({ initialData, availableCities, defaultCity }: Weather
             <div className="space-y-2 pl-20 md:pl-0">
               <CitySwitcher 
                 cities={availableCities} 
-                selectedCity={selectedCityKey} 
-                onSelect={handleCityChange} 
+                selectedCity={selectedMajorCity} 
+                onSelect={handleMajorCityChange} 
               />
               <p className="text-slate-500 dark:text-slate-400 font-medium tracking-wide uppercase text-xs font-sans">
                 {new Date().toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}
               </p>
             </div>
             
-            {cityData && cityData.suburbs.length > 0 && (
+            {currentRegionalCities.length > 0 && (
               <div className="md:self-end">
-                <SuburbSelector 
-                  suburbs={cityData.suburbs} 
-                  selectedSuburb={selectedSuburb} 
-                  onSelect={handleSuburbChange} 
+                <RegionalCitySelector 
+                  regionalCities={[capitalizeCityName(selectedMajorCity), ...currentRegionalCities]} 
+                  selectedCity={selectedRegionalCity} 
+                  onSelect={handleRegionalCityChange} 
                 />
               </div>
             )}
@@ -99,20 +133,20 @@ function WeatherDashboard({ initialData, availableCities, defaultCity }: Weather
 
         <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 transition-opacity duration-200 ${isPending ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
           <div className="lg:col-span-2 space-y-8">
-            {cityData ? (
+            {locationData ? (
               <>
-                <Hero weather={cityData.current} microtext={cityData.microtext} />
+                <Hero weather={locationData.current} microtext={locationData.microtext} />
                 <div className="glass-panel rounded-[2rem] p-2">
-                  <HourlyScroll data={cityData.hourly} />
+                  <HourlyScroll data={locationData.hourly} />
                 </div>
-                <WeekCards data={cityData.daily} />
+                <WeekCards data={locationData.daily} />
               </>
             ) : (
               <div className="h-[600px]" />
             )}
           </div>
           <div className="lg:col-span-1">
-            {cityData && <SidebarStories stories={cityData.stories} cityName={cityData.name} />}
+            {locationData && <SidebarStories stories={locationData.stories} cityName={locationData.name} />}
           </div>
         </div>
         

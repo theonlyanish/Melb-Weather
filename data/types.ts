@@ -50,19 +50,31 @@ export interface AirQuality {
   pm10: number;
 }
 
-export interface CityData {
+export interface StateData {
   name: string;
-  suburbs: string[];
+  state: string;
+  regionalCities: string[];
+  microtext: string[];
+  stories: WeatherStory[];
+}
+
+export interface LocationData {
+  name: string;
+  state?: string;
   current: CurrentWeather;
   microtext: string[];
   hourly: HourlyForecast[];
   daily: DailyForecast[];
   stories: WeatherStory[];
   airQuality?: AirQuality | null;
+  regionalCities?: string[];
 }
 
 export interface WeatherData {
-  cities: {
-    [key: string]: CityData;
+  states: {
+    [key: string]: StateData;
   };
 }
+
+// Legacy support
+export interface CityData extends LocationData {}

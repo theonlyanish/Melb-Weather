@@ -3,15 +3,15 @@ import { motion } from "framer-motion";
 import { MapPin } from "lucide-react";
 import { memo, useCallback } from "react";
 
-interface SuburbSelectorProps {
-  suburbs: string[];
-  selectedSuburb: string;
-  onSelect: (suburb: string) => void;
+interface RegionalCitySelectorProps {
+  regionalCities: string[];
+  selectedCity: string;
+  onSelect: (city: string) => void;
 }
 
-function SuburbSelector({ suburbs, selectedSuburb, onSelect }: SuburbSelectorProps) {
-  const handleSelect = useCallback((suburb: string) => {
-    onSelect(suburb);
+function RegionalCitySelector({ regionalCities, selectedCity, onSelect }: RegionalCitySelectorProps) {
+  const handleSelect = useCallback((city: string) => {
+    onSelect(city);
   }, [onSelect]);
 
   return (
@@ -22,22 +22,22 @@ function SuburbSelector({ suburbs, selectedSuburb, onSelect }: SuburbSelectorPro
       className="flex items-center gap-2 overflow-x-auto py-4 scrollbar-hide px-4"
     >
       <MapPin className="w-5 h-5 text-gray-500 shrink-0" />
-      {suburbs.map((suburb) => (
+      {regionalCities.map((city) => (
         <button
-          key={suburb}
-          onClick={() => handleSelect(suburb)}
+          key={city}
+          onClick={() => handleSelect(city)}
           className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-            selectedSuburb === suburb
+            selectedCity === city
               ? "bg-black dark:bg-white text-white dark:text-black shadow-lg scale-105"
               : "bg-white/70 dark:bg-slate-800/70 text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-slate-700 hover:text-black dark:hover:text-white"
           }`}
         >
-          {suburb}
+          {city}
         </button>
       ))}
     </motion.div>
   );
 }
 
-export default memo(SuburbSelector);
+export default memo(RegionalCitySelector);
 
