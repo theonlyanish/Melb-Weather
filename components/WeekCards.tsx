@@ -12,13 +12,13 @@ export default function WeekCards({ data }: WeekCardsProps) {
      switch (condition.toLowerCase()) {
        case "sunny": 
        case "hot":
-          return <Sun className="w-8 h-8" />;
+          return <Sun className="w-8 h-8 text-yellow-500 dark:text-yellow-400" />;
        case "rainy": 
-          return <CloudRain className="w-8 h-8" />;
+          return <CloudRain className="w-8 h-8 text-sky-600 dark:text-sky-400" />;
        case "stormy":
-          return <CloudLightning className="w-8 h-8" />;
+          return <CloudLightning className="w-8 h-8 text-purple-500 dark:text-purple-400" />;
        case "cloudy": 
-       default: return <Cloud className="w-8 h-8" />;
+       default: return <Cloud className="w-8 h-8 text-slate-500 dark:text-slate-400" />;
      }
   };
 
@@ -26,7 +26,7 @@ export default function WeekCards({ data }: WeekCardsProps) {
     // Subtler, cleaner colors for designer feel
     switch (mood) {
       case "orange": return "bg-orange-50/50 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400 hover:bg-orange-100/50 dark:hover:bg-orange-900/20 border-orange-100 dark:border-orange-900/20";
-      case "blue": return "bg-blue-50/50 dark:bg-blue-900/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100/50 dark:hover:bg-blue-900/20 border-blue-100 dark:border-blue-900/20";
+      case "blue": return "bg-sky-50/50 dark:bg-blue-900/10 text-sky-700 dark:text-sky-400 hover:bg-sky-100/50 dark:hover:bg-blue-900/20 border-sky-100 dark:border-blue-900/20";
       case "gray": return "bg-slate-50/50 dark:bg-slate-800/30 text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 border-slate-100 dark:border-slate-800/30";
       case "red": return "bg-red-50/50 dark:bg-red-900/10 text-red-600 dark:text-red-400 hover:bg-red-100/50 dark:hover:bg-red-900/20 border-red-100 dark:border-red-900/20";
       case "indigo": return "bg-indigo-50/50 dark:bg-indigo-900/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100/50 dark:hover:bg-indigo-900/20 border-indigo-100 dark:border-indigo-900/20";
