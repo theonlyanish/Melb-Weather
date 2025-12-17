@@ -29,6 +29,18 @@ const getIcon = (title: string) => {
 };
 
 function SidebarStories({ stories, cityName = "Melbourne" }: SidebarStoriesProps) {
+  // Helper to calculate width percentage
+  const calculateWidth = (value: string) => {
+    if (value.includes("/")) {
+      const [curr, max] = value.split("/").map(Number);
+      return Math.min(100, (curr / max) * 100);
+    }
+    if (value.includes("%")) {
+      return Math.min(100, parseInt(value));
+    }
+    return 0;
+  };
+
   return (
     <div className="bg-white/90 dark:bg-[#15161E] rounded-[2rem] p-8 shadow-sm border border-slate-100 dark:border-white/5 h-full">
       <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-8 font-display">{cityName} Stories</h3>
@@ -55,7 +67,7 @@ function SidebarStories({ stories, cityName = "Melbourne" }: SidebarStoriesProps
               <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                 <motion.div 
                   initial={{ width: 0 }}
-                  animate={{ width: story.value.includes("/") ? `${Math.min(100, (parseInt(story.value.split("/")[0]) / parseInt(story.value.split("/")[1])) * 100)}%` : "0%" }}
+                  animate={{ width: `${calculateWidth(story.value)}%` }}
                   transition={{ delay: 0.6, duration: 1, type: "spring" }}
                   className={`h-full rounded-full ${story.color}`}
                 />

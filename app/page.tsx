@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import weatherData from "@/data/cities.json";
-import { WeatherData, CityData } from "@/data/types";
+import { WeatherData, LocationData } from "@/data/types";
 import { fetchWeatherData } from "@/lib/weatherService";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import { Loader2 } from "lucide-react";
@@ -9,28 +9,47 @@ import { Loader2 } from "lucide-react";
 export const revalidate = 600;
 
 // Server-side data fetching
-async function getWeatherData(cityKey: string): Promise<CityData | null> {
+async function getWeatherData(cityKey: string): Promise<LocationData | null> {
   const typedWeatherData = weatherData as unknown as WeatherData;
   
   try {
     const realWeatherData = await fetchWeatherData(cityKey);
-    const cityStaticData = typedWeatherData.cities[cityKey];
+    const stateStaticData = typedWeatherData.states[cityKey];
     
     return {
       name: realWeatherData.name,
-      suburbs: cityStaticData?.suburbs || [],
+      state: stateStaticData?.state,
       current: realWeatherData.current,
-      microtext: cityStaticData?.microtext || [],
+      microtext: stateStaticData?.microtext || [],
       hourly: realWeatherData.hourly,
       daily: realWeatherData.daily,
-      stories: realWeatherData.stories || cityStaticData?.stories || [],
+      stories: realWeatherData.stories || stateStaticData?.stories || [],
       airQuality: realWeatherData.airQuality,
+      regionalCities: stateStaticData?.regionalCities || [],
     };
   } catch (error) {
     console.error("Error fetching weather data:", error);
     // Fallback to static data
-    const fallbackData = typedWeatherData.cities[cityKey];
-    return fallbackData || null;
+    const stateData = typedWeatherData.states[cityKey];
+    if (!stateData) return null;
+    
+    return {
+      name: stateData.name,
+      state: stateData.state,
+      current: {
+        temp: 20,
+        feelsLike: 20,
+        chanceRain: 0,
+        windSpeed: 10,
+        windDir: "N",
+        condition: "sunny"
+      },
+      microtext: stateData.microtext,
+      hourly: [],
+      daily: [],
+      stories: stateData.stories,
+      regionalCities: stateData.regionalCities,
+    };
   }
 }
 
@@ -77,8 +96,9 @@ export default async function Home() {
       <Suspense fallback={<LoadingFallback />}>
         <WeatherDashboard 
           initialData={initialData}
-          availableCities={Object.keys(typedWeatherData.cities)}
+          availableCities={Object.keys(typedWeatherData.states)}
           defaultCity={defaultCity}
+          regionalCities={initialData?.regionalCities || []}
         />
       </Suspense>
     </main>

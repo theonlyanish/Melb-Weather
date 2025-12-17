@@ -164,6 +164,8 @@ interface AirQualityResponse {
 }
 
 // Fetch air quality data from Open-Meteo Air Quality API
+// Note: Air quality is currently not displayed in UI, so this is optional
+// Using a short timeout to prevent blocking the main weather fetch
 async function fetchAirQuality(lat: number, lon: number): Promise<AirQualityCurrent | null> {
   try {
     const url = new URL("https://air-quality-api.open-meteo.com/v1/air-quality");
@@ -171,19 +173,28 @@ async function fetchAirQuality(lat: number, lon: number): Promise<AirQualityCurr
     url.searchParams.append("longitude", lon.toString());
     url.searchParams.append("current", "pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone,european_aqi,us_aqi");
     
+    // Add timeout using AbortController (5 seconds max)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    
     const response = await fetch(url.toString(), {
+      signal: controller.signal,
       next: { revalidate: 600 }, // Cache for 10 minutes
     });
     
+    clearTimeout(timeoutId);
+    
     if (!response.ok) {
-      console.warn("Air quality API unavailable");
       return null;
     }
     
     const data: AirQualityResponse = await response.json();
     return data.current;
   } catch (error) {
-    console.warn("Failed to fetch air quality data:", error);
+    // Silently fail - air quality is optional and not displayed
+    if (error instanceof Error && error.name !== 'AbortError') {
+      console.warn("Air quality fetch failed:", error.message);
+    }
     return null;
   }
 }
@@ -202,9 +213,16 @@ async function fetchMarineData(lat: number, lon: number): Promise<MarineData | n
     url.searchParams.append("longitude", lon.toString());
     url.searchParams.append("current", "wave_height,wave_period,wave_direction");
     
+    // Add timeout (5 seconds max)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    
     const response = await fetch(url.toString(), {
+      signal: controller.signal,
       next: { revalidate: 600 }, // Cache for 10 minutes
     });
+    
+    clearTimeout(timeoutId);
     
     if (!response.ok) {
       return null;
@@ -213,7 +231,10 @@ async function fetchMarineData(lat: number, lon: number): Promise<MarineData | n
     const data = await response.json();
     return data.current;
   } catch (error) {
-    console.warn("Failed to fetch marine data:", error);
+    // Silently fail - marine data is optional
+    if (error instanceof Error && error.name !== 'AbortError') {
+      console.warn("Marine data fetch failed:", error.message);
+    }
     return null;
   }
 }
@@ -278,13 +299,36 @@ async function fetchForCoordinates(city: { lat: number; lon: number; name: strin
   url.searchParams.append("timezone", city.timezone);
   url.searchParams.append("forecast_days", "7");
 
-  // Fetch weather data and air quality in parallel for better performance
-  const [weatherResponse, airQuality, marineData] = await Promise.all([
-    fetch(url.toString(), { next: { revalidate: 300 } }),
+  // Fetch weather data first (critical), then optional data in parallel
+  // Air quality is optional and not displayed, so we don't wait for it
+  const weatherController = new AbortController();
+  const weatherTimeoutId = setTimeout(() => weatherController.abort(), 15000);
+  
+  let weatherResponse: Response;
+  try {
+    weatherResponse = await fetch(url.toString(), { 
+      next: { revalidate: 300 },
+      signal: weatherController.signal
+    });
+    clearTimeout(weatherTimeoutId);
+  } catch (error) {
+    clearTimeout(weatherTimeoutId);
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Weather API request timed out after 15 seconds');
+    }
+    throw error;
+  }
+  
+  // Fetch optional data in parallel (non-blocking)
+  const [airQuality, marineData] = await Promise.allSettled([
     fetchAirQuality(city.lat, city.lon),
     // Only fetch marine data for coastal cities
     (cityKey === "sydney" || cityKey === "brisbane") ? fetchMarineData(city.lat, city.lon) : Promise.resolve(null)
   ]);
+  
+  // Extract results from Promise.allSettled
+  const airQualityResult = airQuality.status === 'fulfilled' ? airQuality.value : null;
+  const marineDataResult = marineData.status === 'fulfilled' ? marineData.value : null;
 
   if (!weatherResponse.ok) {
     throw new Error(`Failed to fetch weather data: ${weatherResponse.statusText}`);
@@ -391,8 +435,8 @@ async function fetchForCoordinates(city: { lat: number; lon: number; name: strin
     visibility: current.visibility,
     cloudCover: current.cloud_cover,
     dewPoint: current.dew_point_2m,
-    airQuality,
-    marineData,
+    airQuality: airQualityResult,
+    marineData: marineDataResult,
     precipitationSum: daily.precipitation_sum?.[0] || 0,
     maxWindGusts: daily.wind_gusts_10m_max?.[0] || 0,
   });
@@ -407,6 +451,7 @@ async function fetchForCoordinates(city: { lat: number; lon: number; name: strin
       windDir: getWindDirection(current.wind_direction_10m),
       condition: currentCondition,
       humidity: current.relative_humidity_2m,
+      // UV Index: Real data from Open-Meteo API (reputable source)
       uvIndex: Math.round(current.uv_index),
       pressure: Math.round(current.surface_pressure),
       visibility: Math.round(current.visibility / 1000), // Convert to km
@@ -417,10 +462,12 @@ async function fetchForCoordinates(city: { lat: number; lon: number; name: strin
     hourly: hourlyForecast,
     daily: dailyForecast,
     stories,
-    airQuality: airQuality ? {
-      aqi: airQuality.us_aqi,
-      pm25: Math.round(airQuality.pm2_5),
-      pm10: Math.round(airQuality.pm10),
+    // Air quality is fetched but not currently displayed in UI
+    // Keeping it in the response for potential future use
+    airQuality: airQualityResult ? {
+      aqi: airQualityResult.us_aqi,
+      pm25: Math.round(airQualityResult.pm2_5),
+      pm10: Math.round(airQualityResult.pm10),
     } : null,
   };
 }
@@ -445,7 +492,8 @@ function calculateDynamicStories(cityKey: string, weather: {
 }) {
   const stories = [];
 
-  // Umbrella Index - based on rain probability
+  // Umbrella Index - based on rain probability (0-100% maps to 0-10)
+  // Higher index = higher chance of rain = more likely to need umbrella
   const umbrellaIndex = Math.min(10, Math.round(weather.rainProb / 10));
   stories.push({
     title: "Umbrella Index",
@@ -511,6 +559,9 @@ function calculateDynamicStories(cityKey: string, weather: {
     });
 
     // Bushfire Danger (Melbourne/Victoria is bushfire prone)
+    // NOTE: Currently calculated from weather conditions (temp, humidity, wind)
+    // Ideally should use real fire danger ratings from CFA/VicEmergency or BOM
+    // Real APIs typically require authentication or are not publicly available
     // Only show in fire season or when conditions are dangerous
     const month = new Date().getMonth();
     const isFireSeason = month >= 10 || month <= 2; // Nov-Mar
@@ -613,6 +664,8 @@ function calculateDynamicStories(cityKey: string, weather: {
     });
 
     // Bushfire Danger (Sydney/NSW is very bushfire prone - Black Summer 2019-2020)
+    // NOTE: Currently calculated from weather conditions
+    // Ideally should use real fire danger ratings from NSW RFS or BOM
     const month = new Date().getMonth();
     const isFireSeason = month >= 9 || month <= 2; // Oct-Mar (longer season for NSW)
     
