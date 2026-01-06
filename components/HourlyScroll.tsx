@@ -8,13 +8,13 @@ interface HourlyScrollProps {
   data: HourlyForecast[];
 }
 
-const getIcon = (condition: string, time: string) => {
-  const isNight = (time.includes("PM") && (parseInt(time) >= 7 && parseInt(time) !== 12)) || (time.includes("AM") && parseInt(time) <= 5);
-  
-  if (condition === "clear" || (isNight && condition === "sunny")) return <Moon className="w-8 h-8 text-indigo-400" />;
+const getIcon = (condition: string, isNight: boolean) => {
+  if (isNight && (condition === "clear" || condition === "sunny")) return <Moon className="w-8 h-8 text-indigo-400" />;
   
   switch (condition.toLowerCase()) {
-    case "sunny": return <Sun className="w-8 h-8 text-yellow-500" />;
+    case "sunny": 
+    case "clear":
+      return <Sun className="w-8 h-8 text-yellow-500" />;
     case "rainy": return <CloudRain className="w-8 h-8 text-blue-400" />;
     case "cloudy": 
     default: return <Cloud className="w-8 h-8 text-gray-400" />;
@@ -43,9 +43,9 @@ const HourCard = memo(function HourCard({ hour, index }: { hour: HourlyForecast;
        )}
        <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 font-sans">{hour.time}</span>
        <div className="my-auto drop-shadow-sm scale-110">
-          {getIcon(hour.condition, hour.time)}
+          {getIcon(hour.condition, hour.isNight || false)}
        </div>
-       <span className="text-2xl font-semibold text-slate-800 dark:text-slate-100 font-sans tracking-tight">{hour.temp}°</span>
+       <span className="text-2xl font-semibold text-slate-800 dark:text-slate-100 font-sans tracking-tight pr-0.5">{hour.temp}°</span>
     </motion.div>
   );
 });

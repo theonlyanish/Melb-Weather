@@ -113,7 +113,7 @@ export default function Hero({ weather, microtext }: HeroProps) {
            transition={{ delay: 0.3, type: "spring", stiffness: 100 }}
            className="relative"
         >
-            <h1 className="text-[10rem] leading-none font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-slate-700 to-slate-900 dark:from-white dark:to-slate-300 drop-shadow-sm font-display">
+            <h1 className="text-[10rem] leading-none font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-slate-700 to-slate-900 dark:from-white dark:to-slate-300 drop-shadow-sm font-display pr-4 pb-2">
             {weather.temp}°
             </h1>
         </motion.div>

@@ -19,6 +19,7 @@ export interface HourlyForecast {
   temp: number;
   condition: string;
   isPeak: boolean;
+  isNight?: boolean;
   rainProb?: number;
   windSpeed?: number;
 }

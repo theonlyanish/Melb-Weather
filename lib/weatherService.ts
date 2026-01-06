@@ -377,6 +377,7 @@ async function fetchForCoordinates(city: { lat: number; lon: number; name: strin
     const timeDate = new Date(timeStr);
     const hour = timeDate.getHours();
     const isPeak = (hour >= 7 && hour <= 9) || (hour >= 17 && hour <= 19);
+    const isNight = hour >= 19 || hour <= 5;
     
     let timeLabel = "Now";
     // For the first item, show "Now", otherwise formatted hour
@@ -392,6 +393,7 @@ async function fetchForCoordinates(city: { lat: number; lon: number; name: strin
       temp: Math.round(hourly.temperature_2m[startIndex + index]),
       condition: WEATHER_CODE_MAP[hourly.weather_code[startIndex + index]] || "cloudy",
       isPeak,
+      isNight,
       rainProb: hourly.precipitation_probability?.[startIndex + index] || 0,
       windSpeed: Math.round(hourly.wind_speed_10m?.[startIndex + index] || 0),
     };
