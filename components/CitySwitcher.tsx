@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 interface CitySwitcherProps {
   cities: string[];
@@ -11,9 +11,23 @@ interface CitySwitcherProps {
 
 export default function CitySwitcher({ cities, selectedCity, onSelect }: CitySwitcherProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
-    <div className="relative z-50">
+    <div className="relative z-50" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 hover:opacity-80 theme-slow font-display"
@@ -55,4 +69,3 @@ export default function CitySwitcher({ cities, selectedCity, onSelect }: CitySwi
     </div>
   );
 }
-
