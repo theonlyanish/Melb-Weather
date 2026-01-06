@@ -8,7 +8,7 @@ import SidebarStories from "@/components/SidebarStories";
 import CitySwitcher from "@/components/CitySwitcher";
 import { LocationData } from "@/data/types";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Loader2 } from "lucide-react";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface WeatherDashboardProps {
   initialData: LocationData | null;
@@ -90,14 +90,7 @@ function WeatherDashboard({ initialData, availableCities, defaultCity, regionalC
       </div>
       
       {/* Loading Overlay - Only for city switching */}
-      {isPending && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/50 dark:bg-black/50 backdrop-blur-sm transition-opacity duration-200">
-          <div className="flex flex-col items-center gap-4 p-8 rounded-3xl bg-white/80 dark:bg-slate-900/80 shadow-2xl border border-white/20">
-            <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
-            <p className="text-slate-600 dark:text-slate-300 font-medium">Fetching forecast...</p>
-          </div>
-        </div>
-      )}
+      {isPending && <LoadingSpinner message="Fetching forecast..." />}
 
       <div className="max-w-7xl mx-auto space-y-8 relative z-10 pt-16 md:pt-4">
         <header className="relative pb-8">

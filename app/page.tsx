@@ -3,7 +3,7 @@ import weatherData from "@/data/cities.json";
 import { WeatherData, LocationData } from "@/data/types";
 import { fetchWeatherData } from "@/lib/weatherService";
 import WeatherDashboard from "@/components/WeatherDashboard";
-import { Loader2 } from "lucide-react";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 // Enable ISR - revalidate every 10 minutes for fresh weather data
 export const revalidate = 600;
@@ -54,14 +54,7 @@ async function getWeatherData(cityKey: string): Promise<LocationData | null> {
 }
 
 function LoadingFallback() {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/50 dark:bg-black/50">
-      <div className="flex flex-col items-center gap-4 p-8 rounded-3xl bg-white/80 dark:bg-slate-900/80 shadow-2xl border border-white/20">
-        <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
-        <p className="text-slate-600 dark:text-slate-300 font-medium">Loading forecast...</p>
-      </div>
-    </div>
-  );
+  return <LoadingSpinner />;
 }
 
 export default async function Home() {
