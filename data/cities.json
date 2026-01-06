@@ -10,7 +10,10 @@
         "Rain? Sun? Both.",
         "Umbrella recommended (you'll probably lose it).",
         "Standard Melbourne chaos.",
-        "Wait 5 minutes, it'll change."
+        "Wait 5 minutes, it'll change.",
+        "Flinders Street steps are packed.",
+        "Tram 75 is delayed. Shocking.",
+        "Lane way coffee calling."
       ],
       "stories": [
         { "title": "Umbrella Index", "value": "7/10", "type": "bar", "color": "bg-blue-500" },
@@ -27,7 +30,10 @@
         "Traffic is terrible, but look at the bridge.",
         "Bondi is packed.",
         "Ferry to Manly?",
-        "Watch out for the bin chickens."
+        "Watch out for the bin chickens.",
+        "Harbour views worth the rent.",
+        "Circular Quay vibes.",
+        "Eastern suburbs tan loading."
       ],
       "stories": [
         { "title": "Beach Day Score", "value": "10/10", "type": "bar", "color": "bg-yellow-500" },
@@ -43,8 +49,10 @@
         "Beautiful one day, perfect the next.",
         "It's humid.",
         "Riverfire anytime soon?",
-        "Bin chicken capital.",
-        "Sunny and humid."
+        "South Bank is calling.",
+        "Story Bridge climb weather.",
+        "XXXX Gold weather.",
+        "CityCat down the river."
       ],
       "stories": [
         { "title": "Humidity", "value": "99%", "type": "bar", "color": "bg-red-500" },
@@ -59,9 +67,12 @@
       "microtext": [
         "Fresh Antarctic breeze.",
         "Put another layer on.",
-        "Is that snow on the mountain?",
+        "Is that snow on kunanyi?",
         "Cleanest air in the world.",
-        "Winter is coming (always)."
+        "Winter is coming (always).",
+        "Salamanca Market weather.",
+        "MONA ferry might be choppy.",
+        "Battery Point stroll conditions."
       ],
       "stories": [
         { "title": "Aurora Chance", "value": "Low", "type": "text", "color": "text-green-400" },
@@ -78,7 +89,10 @@
         "Sunset at Cottesloe.",
         "It's always sunny here.",
         "Fremantle Doctor incoming.",
-        "Quokkas are cuter than you."
+        "Quokkas are cuter than you.",
+        "Kings Park picnic weather.",
+        "Rottnest day trip conditions.",
+        "Elizabeth Quay vibes."
       ],
       "stories": [
         { "title": "Beach Perfect", "value": "Yes", "type": "text", "color": "text-blue-500" },
@@ -86,5 +100,280 @@
         { "title": "Mining Boom", "value": "8/10", "type": "bar", "color": "bg-yellow-600" }
       ]
     }
+  },
+  "cityMicrotext": {
+    "melbourne": [
+      "Four seasons in one morning.",
+      "Bring a jacket. Always.",
+      "Rain? Sun? Both.",
+      "Umbrella recommended (you'll probably lose it).",
+      "Standard Melbourne chaos.",
+      "Wait 5 minutes, it'll change.",
+      "Flinders Street steps are packed.",
+      "Tram 75 is delayed. Shocking.",
+      "Laneway coffee calling."
+    ],
+    "ballarat": [
+      "Colder than Melbourne. Always.",
+      "Gold rush weather.",
+      "Sovereign Hill jacket weather.",
+      "Sturt Street stroll conditions.",
+      "Lake Wendouree walking weather.",
+      "Extra layer recommended.",
+      "Ballarat Wildlife Park weather."
+    ],
+    "bendigo": [
+      "Gold country conditions.",
+      "Central Deborah Mine weather.",
+      "Rosalind Park picnic ready?",
+      "Talking tram weather.",
+      "Sacred Heart views.",
+      "Warmer than Ballarat at least."
+    ],
+    "geelong": [
+      "Waterfront stroll weather.",
+      "Bollards are looking good.",
+      "Eastern Beach conditions.",
+      "Cats training weather.",
+      "You Yangs hiking ready?",
+      "Bay breeze incoming.",
+      "Pako Festa vibes."
+    ],
+    "mildura": [
+      "River city sunshine.",
+      "Murray paddle weather.",
+      "Desert meets the river.",
+      "Sunraysia conditions.",
+      "35°C is cool here.",
+      "Fruit picking weather.",
+      "Red sand, blue sky."
+    ],
+    "shepparton": [
+      "Goulburn Valley weather.",
+      "Fruit bowl of Australia.",
+      "Moooving Art Cows weather.",
+      "SPC factory town conditions.",
+      "Flat as a pancake.",
+      "Victoria Lake picnic weather."
+    ],
+    "sydney": [
+      "Beautiful one day, perfect the next.",
+      "Traffic is terrible, but look at the bridge.",
+      "Bondi is packed.",
+      "Ferry to Manly?",
+      "Watch out for the bin chickens.",
+      "Harbour views worth the rent.",
+      "Circular Quay vibes.",
+      "Eastern suburbs tan loading."
+    ],
+    "newcastle": [
+      "Newy beach weather.",
+      "Nobby's lighthouse views.",
+      "Hunter Valley wine weather.",
+      "Merewether surfing conditions.",
+      "Not Sydney. Better.",
+      "Bar Beach ready?",
+      "Steel city sunshine."
+    ],
+    "wollongong": [
+      "The Gong conditions.",
+      "Sea Cliff Bridge weather.",
+      "Nan Tien Temple vibes.",
+      "Grand Pacific Drive ready.",
+      "Escarpment views today.",
+      "Five Islands brewing.",
+      "South Coast sunshine."
+    ],
+    "central coast": [
+      "Not quite Sydney.",
+      "Terrigal beach weather.",
+      "The Entrance pelicans.",
+      "Avoca vibes.",
+      "Bouddi bushwalk ready?",
+      "Pearl Beach conditions.",
+      "Commuter escape weather."
+    ],
+    "blue mountains": [
+      "Three Sisters visibility.",
+      "Scenic Railway weather.",
+      "Bring. A. Jumper.",
+      "Leura village stroll ready.",
+      "Katoomba vibes.",
+      "Echo Point conditions.",
+      "10°C cooler than Sydney.",
+      "Bushwalk weather."
+    ],
+    "canberra": [
+      "Canberra cold strikes again.",
+      "Parliament House windy.",
+      "Floriade weather? (spring only)",
+      "Lake Burley Griffin conditions.",
+      "Questacon day trip ready.",
+      "War Memorial weather.",
+      "Politician spotting conditions.",
+      "Four distinct seasons.",
+      "Frost warning likely."
+    ],
+    "brisbane": [
+      "Beautiful one day, perfect the next.",
+      "It's humid.",
+      "Riverfire anytime soon?",
+      "South Bank is calling.",
+      "Story Bridge climb weather.",
+      "XXXX Gold weather.",
+      "CityCat down the river."
+    ],
+    "gold coast": [
+      "Surfers Paradise packed.",
+      "Theme park weather.",
+      "Meter maids are out.",
+      "Schoolies warning.",
+      "Currumbin sanctuary ready.",
+      "Hinterland escape weather.",
+      "Burleigh heads vibes.",
+      "Q1 views today."
+    ],
+    "sunshine coast": [
+      "Noosa Main Beach ready.",
+      "Australia Zoo weather.",
+      "Glass House Mountains visible.",
+      "Mooloolaba vibes.",
+      "Eumundi markets weather.",
+      "Less hectic than Goldie.",
+      "Hastings Street stroll."
+    ],
+    "toowoomba": [
+      "Garden City blooming.",
+      "Carnival of Flowers ready?",
+      "Cooler than Brisbane.",
+      "Range crossing weather.",
+      "Picnic Point views.",
+      "Japanese Garden vibes.",
+      "Mountain air fresh."
+    ],
+    "cairns": [
+      "Reef trip conditions.",
+      "Crocodile weather.",
+      "Stinger season check.",
+      "Kuranda railway ready.",
+      "Tropical downpour likely.",
+      "Daintree accessible?",
+      "Esplanade lagoon weather.",
+      "Green Island calling."
+    ],
+    "townsville": [
+      "Castle Hill hiking weather.",
+      "Magnetic Island ferry ready.",
+      "Reef HQ conditions.",
+      "The Strand stroll weather.",
+      "Cowboys territory.",
+      "Dry season sunshine.",
+      "Billabong Sanctuary ready."
+    ],
+    "hobart": [
+      "Fresh Antarctic breeze.",
+      "Put another layer on.",
+      "Is that snow on kunanyi?",
+      "Cleanest air in the world.",
+      "Winter is coming (always).",
+      "Salamanca Market weather.",
+      "MONA ferry might be choppy.",
+      "Battery Point stroll conditions."
+    ],
+    "launceston": [
+      "Cataract Gorge weather.",
+      "Penny Royal ready?",
+      "Tamar Valley wine weather.",
+      "Slightly warmer than Hobart.",
+      "City Park peacocks out.",
+      "James Boag's brewery weather.",
+      "Heritage walk conditions."
+    ],
+    "burnie": [
+      "Makers Workshop weather.",
+      "Penguin parade ready?",
+      "Emu Valley Rhododendron.",
+      "Paper mill conditions.",
+      "Fern Glade accessible.",
+      "Coastal breeze incoming."
+    ],
+    "devonport": [
+      "Spirit of Tasmania weather.",
+      "Cradle Mountain day trip?",
+      "Bass Strait choppy.",
+      "Mersey Bluff lighthouse.",
+      "Home Hill heritage.",
+      "Gateway to the Wilderness."
+    ],
+    "ulverstone": [
+      "Clock tower conditions.",
+      "Leven River stroll weather.",
+      "Penguin nearby.",
+      "Gunns Plains caves ready?",
+      "Dial Range hiking weather.",
+      "Small town vibes."
+    ],
+    "kingston": [
+      "Fruit growers market.",
+      "Beach suburb of Hobart.",
+      "Channel Highway views.",
+      "Bruny Island ferry weather.",
+      "Kingston Beach conditions.",
+      "Shot Tower accessible."
+    ],
+    "perth": [
+      "Most isolated city on Earth.",
+      "Sunset at Cottesloe.",
+      "It's always sunny here.",
+      "Fremantle Doctor incoming.",
+      "Quokkas are cuter than you.",
+      "Kings Park picnic weather.",
+      "Rottnest day trip conditions.",
+      "Elizabeth Quay vibes."
+    ],
+    "fremantle": [
+      "Freo vibes strong.",
+      "Cappuccino Strip ready.",
+      "Freo Markets weather.",
+      "Round House conditions.",
+      "Little Creatures brewing weather.",
+      "Fishing Boat Harbour calling.",
+      "Historic prison tour ready.",
+      "Sea breeze = Fremantle Doctor."
+    ],
+    "mandurah": [
+      "Dolphin spotting weather.",
+      "Boardwalk stroll ready.",
+      "Crab catching conditions.",
+      "Estuary calm today?",
+      "Falcon Bay beach ready.",
+      "Peel region sunshine."
+    ],
+    "bunbury": [
+      "Dolphin Discovery weather.",
+      "Back Beach conditions.",
+      "Koombana Bay calm?",
+      "Big Swamp accessible.",
+      "Marlston Hill views.",
+      "Southwest gateway."
+    ],
+    "albany": [
+      "The Gap is dramatic today.",
+      "Whaling station weather.",
+      "Stirling Ranges visible?",
+      "Middleton Beach conditions.",
+      "ANZAC memorial weather.",
+      "Windy. Very windy.",
+      "Southern Ocean wild."
+    ],
+    "geraldton": [
+      "Windsurfing capital conditions.",
+      "Batavia Coast weather.",
+      "HMAS Sydney memorial.",
+      "Abrolhos Islands trip ready?",
+      "Point Moore lighthouse.",
+      "Midwest sunshine.",
+      "Lobster season check."
+    ]
   }
 }

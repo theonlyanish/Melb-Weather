@@ -8,6 +8,11 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 // Enable ISR - revalidate every 10 minutes for fresh weather data
 export const revalidate = 600;
 
+// Helper to get the normalized city key for microtext lookup
+function getNormalizedCityKey(cityKey: string): string {
+  return cityKey.toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
 // Server-side data fetching
 async function getWeatherData(cityKey: string): Promise<LocationData | null> {
   const typedWeatherData = weatherData as unknown as WeatherData;
@@ -16,11 +21,17 @@ async function getWeatherData(cityKey: string): Promise<LocationData | null> {
     const realWeatherData = await fetchWeatherData(cityKey);
     const stateStaticData = typedWeatherData.states[cityKey];
     
+    // Get city-specific microtext first, fall back to state microtext
+    const normalizedKey = getNormalizedCityKey(cityKey);
+    const cityMicrotext = typedWeatherData.cityMicrotext?.[normalizedKey] 
+      || stateStaticData?.microtext 
+      || [];
+    
     return {
       name: realWeatherData.name,
       state: stateStaticData?.state,
       current: realWeatherData.current,
-      microtext: stateStaticData?.microtext || [],
+      microtext: cityMicrotext,
       hourly: realWeatherData.hourly,
       daily: realWeatherData.daily,
       stories: realWeatherData.stories || stateStaticData?.stories || [],
@@ -33,6 +44,11 @@ async function getWeatherData(cityKey: string): Promise<LocationData | null> {
     const stateData = typedWeatherData.states[cityKey];
     if (!stateData) return null;
     
+    // Get city-specific microtext for fallback too
+    const normalizedKey = getNormalizedCityKey(cityKey);
+    const cityMicrotext = typedWeatherData.cityMicrotext?.[normalizedKey] 
+      || stateData.microtext;
+    
     return {
       name: stateData.name,
       state: stateData.state,
@@ -44,7 +60,7 @@ async function getWeatherData(cityKey: string): Promise<LocationData | null> {
         windDir: "N",
         condition: "sunny"
       },
-      microtext: stateData.microtext,
+      microtext: cityMicrotext,
       hourly: [],
       daily: [],
       stories: stateData.stories,

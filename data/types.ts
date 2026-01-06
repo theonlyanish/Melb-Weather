@@ -75,6 +75,9 @@ export interface WeatherData {
   states: {
     [key: string]: StateData;
   };
+  cityMicrotext: {
+    [key: string]: string[];
+  };
 }
 
 // Legacy support

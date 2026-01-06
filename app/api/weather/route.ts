@@ -3,6 +3,11 @@ import { fetchWeatherData } from "@/lib/weatherService";
 import weatherData from "@/data/cities.json";
 import { LocationData, WeatherData, StateData } from "@/data/types";
 
+// Helper to get the normalized city key for microtext lookup
+function getNormalizedCityKey(cityKey: string): string {
+  return cityKey.toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
 // Helper to fetch a single city's weather data with error isolation
 async function fetchCityWeather(cityKey: string, typedWeatherData: WeatherData): Promise<{ data: LocationData | null; error: string | null; cityKey: string }> {
   try {
@@ -28,11 +33,17 @@ async function fetchCityWeather(cityKey: string, typedWeatherData: WeatherData):
       }
     }
     
+    // Get city-specific microtext first, fall back to state microtext
+    const normalizedKey = getNormalizedCityKey(cityKey);
+    const cityMicrotext = typedWeatherData.cityMicrotext?.[normalizedKey] 
+      || stateStaticData?.microtext 
+      || [];
+    
     const mergedData: LocationData = {
       name: realWeatherData.name,
       state: stateStaticData?.state,
       current: realWeatherData.current,
-      microtext: stateStaticData?.microtext || [],
+      microtext: cityMicrotext,
       hourly: realWeatherData.hourly,
       daily: realWeatherData.daily,
       stories: realWeatherData.stories || stateStaticData?.stories || [],
