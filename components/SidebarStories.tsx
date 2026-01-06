@@ -42,8 +42,8 @@ function SidebarStories({ stories, cityName = "Melbourne" }: SidebarStoriesProps
   };
 
   return (
-    <div className="bg-white/90 dark:bg-[#15161E] rounded-[2rem] p-8 shadow-sm border border-slate-100 dark:border-white/5 h-full">
-      <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-8 font-display">{cityName} Stories</h3>
+    <div className="bg-white/90 dark:bg-[#15161E] rounded-[2rem] p-8 shadow-sm border border-slate-100 dark:border-white/5 h-full theme-slow">
+      <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-8 font-display theme-slow">{cityName} Stories</h3>
       <div className="space-y-8">
         {stories.map((story, index) => (
           <motion.div 
@@ -54,17 +54,17 @@ function SidebarStories({ stories, cityName = "Melbourne" }: SidebarStoriesProps
             className="flex flex-col gap-3"
           >
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 text-slate-600 dark:text-slate-300 font-medium font-sans">
-                <div className={`p-2 rounded-full ${story.color.replace("bg-", "text-").replace("500", "600")} bg-opacity-10 dark:bg-opacity-20`}>
+              <div className="flex items-center gap-3 text-slate-600 dark:text-slate-300 font-medium font-sans theme-slow">
+                <div className={`p-2 rounded-full ${story.color.replace("bg-", "text-").replace("500", "600")} bg-opacity-10 dark:bg-opacity-20 theme-slow`}>
                    {getIcon(story.title)}
                 </div>
                 <span>{story.title}</span>
               </div>
-              <span className={`font-bold ${story.color.replace("bg-", "text-")}`}>{story.value}</span>
+              <span className={`font-bold ${story.color.replace("bg-", "text-")} theme-slow`}>{story.value}</span>
             </div>
             
             {story.type === "bar" && (
-              <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden theme-slow">
                 <motion.div 
                   initial={{ width: 0 }}
                   animate={{ width: `${calculateWidth(story.value)}%` }}
@@ -81,7 +81,7 @@ function SidebarStories({ stories, cityName = "Melbourne" }: SidebarStoriesProps
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
-        className="mt-10 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl text-sm text-slate-500 dark:text-slate-400 italic text-center border border-slate-100 dark:border-slate-800"
+        className="mt-10 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl text-sm text-slate-500 dark:text-slate-400 italic text-center border border-slate-100 dark:border-slate-800 theme-slow"
       >
          &quot;If you don&apos;t like the weather, just wait 5 minutes.&quot;
       </motion.div>

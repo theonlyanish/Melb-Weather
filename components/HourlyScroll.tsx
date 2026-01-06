@@ -30,7 +30,7 @@ const HourCard = memo(function HourCard({ hour, index }: { hour: HourlyForecast;
       transition={{ delay: Math.min(index * 0.03, 0.3) }} // Cap delay for faster perceived load
       whileHover={{ scale: 1.05, y: -5 }}
       className={`relative flex flex-col items-center justify-between p-4 rounded-3xl min-w-[100px] h-40 
-       border will-change-transform
+       border will-change-transform theme-slow
        dark:border-white/10 dark:hover:bg-white/10
        ${hour.isPeak 
           ? "bg-blue-50/70 dark:bg-blue-500/10 border-blue-200/50 dark:border-blue-400/20" 
