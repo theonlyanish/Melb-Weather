@@ -299,34 +299,43 @@ async function fetchForCoordinates(city: { lat: number; lon: number; name: strin
   url.searchParams.append("timezone", city.timezone);
   url.searchParams.append("forecast_days", "7");
 
-  // Fetch weather data first (critical), then optional data in parallel
-  // Air quality is optional and not displayed, so we don't wait for it
+  // Fetch ALL data in parallel - weather, air quality, and marine (if applicable)
+  // This significantly reduces total fetch time by running requests concurrently
   const weatherController = new AbortController();
   const weatherTimeoutId = setTimeout(() => weatherController.abort(), 15000);
   
-  let weatherResponse: Response;
-  try {
-    weatherResponse = await fetch(url.toString(), { 
-      next: { revalidate: 300 },
-      signal: weatherController.signal
-    });
-    clearTimeout(weatherTimeoutId);
-  } catch (error) {
-    clearTimeout(weatherTimeoutId);
-    if (error instanceof Error && error.name === 'AbortError') {
-      throw new Error('Weather API request timed out after 15 seconds');
+  const fetchWeather = async (): Promise<Response> => {
+    try {
+      const response = await fetch(url.toString(), { 
+        next: { revalidate: 300 },
+        signal: weatherController.signal
+      });
+      clearTimeout(weatherTimeoutId);
+      return response;
+    } catch (error) {
+      clearTimeout(weatherTimeoutId);
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error('Weather API request timed out after 15 seconds');
+      }
+      throw error;
     }
-    throw error;
-  }
+  };
   
-  // Fetch optional data in parallel (non-blocking)
-  const [airQuality, marineData] = await Promise.allSettled([
+  // Fetch everything in parallel - weather is critical, others are optional
+  const [weatherResult, airQuality, marineData] = await Promise.allSettled([
+    fetchWeather(),
     fetchAirQuality(city.lat, city.lon),
     // Only fetch marine data for coastal cities
     (cityKey === "sydney" || cityKey === "brisbane") ? fetchMarineData(city.lat, city.lon) : Promise.resolve(null)
   ]);
   
-  // Extract results from Promise.allSettled
+  // Extract weather response - this is critical, so we throw if it failed
+  if (weatherResult.status === 'rejected') {
+    throw weatherResult.reason;
+  }
+  const weatherResponse = weatherResult.value;
+  
+  // Extract optional results - these can fail silently
   const airQualityResult = airQuality.status === 'fulfilled' ? airQuality.value : null;
   const marineDataResult = marineData.status === 'fulfilled' ? marineData.value : null;
 

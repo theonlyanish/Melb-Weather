@@ -3,27 +3,9 @@ import { fetchWeatherData } from "@/lib/weatherService";
 import weatherData from "@/data/cities.json";
 import { LocationData, WeatherData, StateData } from "@/data/types";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const cityKey = searchParams.get("city") || "melbourne";
-  const type = searchParams.get("type"); // 'state' or undefined for weather
-
+// Helper to fetch a single city's weather data with error isolation
+async function fetchCityWeather(cityKey: string, typedWeatherData: WeatherData): Promise<{ data: LocationData | null; error: string | null; cityKey: string }> {
   try {
-    const typedWeatherData = weatherData as unknown as WeatherData;
-    
-    // If requesting state info only (for regional cities list)
-    if (type === "state") {
-      const stateData = typedWeatherData.states[cityKey];
-      if (!stateData) {
-        return NextResponse.json(
-          { error: "State not found" },
-          { status: 404 }
-        );
-      }
-      return NextResponse.json(stateData);
-    }
-    
-    // Fetch weather data
     const realWeatherData = await fetchWeatherData(cityKey);
     
     // Find the appropriate state data
@@ -35,7 +17,7 @@ export async function GET(request: Request) {
     // If not found, check if this city belongs to any state's regional cities
     if (!stateStaticData) {
       const normalizedCityKey = cityKey.toLowerCase().replace(/\s+/g, '');
-      for (const [stateKey, stateInfo] of Object.entries(typedWeatherData.states)) {
+      for (const [, stateInfo] of Object.entries(typedWeatherData.states)) {
         const hasRegionalCity = stateInfo.regionalCities.some(
           city => city.toLowerCase().replace(/\s+/g, '') === normalizedCityKey
         );
@@ -58,9 +40,70 @@ export async function GET(request: Request) {
       regionalCities: stateStaticData?.regionalCities || [],
     };
 
-    return NextResponse.json(mergedData);
+    return { data: mergedData, error: null, cityKey };
   } catch (error) {
-    console.error("Error fetching weather data:", error);
+    console.error(`Error fetching weather for ${cityKey}:`, error);
+    return { 
+      data: null, 
+      error: error instanceof Error ? error.message : "Unknown error", 
+      cityKey 
+    };
+  }
+}
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const cityKey = searchParams.get("city") || "melbourne";
+  const citiesParam = searchParams.get("cities"); // comma-separated list for batch requests
+  const type = searchParams.get("type"); // 'state' or undefined for weather
+
+  try {
+    const typedWeatherData = weatherData as unknown as WeatherData;
+    
+    // If requesting state info only (for regional cities list)
+    if (type === "state") {
+      const stateData = typedWeatherData.states[cityKey];
+      if (!stateData) {
+        return NextResponse.json(
+          { error: "State not found" },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json(stateData);
+    }
+    
+    // Batch request: fetch multiple cities in parallel with error isolation
+    // Each city fetch is independent - one failure won't affect others
+    if (citiesParam) {
+      const cities = citiesParam.split(',').map(c => c.trim()).filter(Boolean);
+      
+      // Fetch all cities in parallel using Promise.allSettled for error isolation
+      const results = await Promise.all(
+        cities.map(city => fetchCityWeather(city, typedWeatherData))
+      );
+      
+      // Return results with both successes and failures
+      const response: Record<string, { data: LocationData | null; error: string | null }> = {};
+      for (const result of results) {
+        response[result.cityKey] = { data: result.data, error: result.error };
+      }
+      
+      return NextResponse.json(response);
+    }
+    
+    // Single city request
+    const result = await fetchCityWeather(cityKey, typedWeatherData);
+    
+    if (result.error || !result.data) {
+      return NextResponse.json(
+        { error: result.error || "Failed to fetch weather data" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(result.data);
+  } catch (error) {
+    console.error("Error in weather API:", error);
     if (error instanceof Error) {
       console.error("Error details:", error.message, error.stack);
     }
