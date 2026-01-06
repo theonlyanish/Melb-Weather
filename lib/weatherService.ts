@@ -483,6 +483,20 @@ async function fetchForCoordinates(city: { lat: number; lon: number; name: strin
   };
 }
 
+// Story priority levels (lower number = higher priority)
+// 1: Critical safety (bushfire, flood, storm warnings)
+// 2: Health (UV, humidity comfort)
+// 3: Practical (umbrella, transport, outdoor activities)
+// 4: Local interest (beach, surf, hiking)
+// 5: Fun gimmicks (coffee, isolation, oysters)
+interface StoryWithPriority {
+  title: string;
+  value: string;
+  type: string;
+  color: string;
+  priority: number;
+}
+
 // Calculate dynamic stories based on real weather data
 function calculateDynamicStories(cityKey: string, weather: {
   temp: number;
@@ -501,184 +515,26 @@ function calculateDynamicStories(cityKey: string, weather: {
   precipitationSum: number;
   maxWindGusts: number;
 }) {
-  const stories = [];
+  const stories: StoryWithPriority[] = [];
+  const month = new Date().getMonth();
+  const hour = new Date().getHours();
 
-  // Umbrella Index - based on rain probability (0-100% maps to 0-10)
-  // Higher index = higher chance of rain = more likely to need umbrella
-  const umbrellaIndex = Math.min(10, Math.round(weather.rainProb / 10));
-  stories.push({
-    title: "Umbrella Index",
-    value: `${umbrellaIndex}/10`,
-    type: "bar",
-    color: umbrellaIndex > 6 ? "bg-blue-500" : umbrellaIndex > 3 ? "bg-blue-400" : "bg-green-500",
-  });
+  // ============================================
+  // PRIORITY 1: CRITICAL SAFETY WARNINGS
+  // ============================================
 
-  // City-specific stories
-  if (cityKey === "melbourne") {
-    // Tram Delay Likelihood - based on weather conditions (enhanced)
-    let tramDelay = "Low";
-    let tramColor = "text-green-500";
-    let tramDelayScore = 0;
-    
-    // Factor in multiple weather conditions
-    if (weather.condition === "stormy") tramDelayScore += 4;
-    else if (weather.condition === "rainy") tramDelayScore += 2;
-    if (weather.windSpeed > 40) tramDelayScore += 3;
-    else if (weather.windSpeed > 25) tramDelayScore += 1;
-    if (weather.windGusts > 60) tramDelayScore += 2;
-    if (weather.visibility < 1000) tramDelayScore += 2; // Poor visibility
-    if (weather.precipitationSum > 10) tramDelayScore += 2; // Heavy rain accumulation
-    
-    if (tramDelayScore >= 5) {
-      tramDelay = "High";
-      tramColor = "text-red-500";
-    } else if (tramDelayScore >= 2) {
-      tramDelay = "Moderate";
-      tramColor = "text-yellow-500";
-    }
-    
-    stories.push({
-      title: "Tram Delay Likelihood",
-      value: tramDelay,
-      type: "text",
-      color: tramColor,
-    });
+  // Bushfire Danger - Calculate for fire-prone cities
+  const fireProneCity = ["melbourne", "sydney", "perth", "hobart", "tasmania", "brisbane"].includes(cityKey) ||
+    // Regional cities in fire-prone areas
+    ["ballarat", "bendigo", "geelong", "mildura", "shepparton", // VIC
+     "newcastle", "wollongong", "blue mountains", "central coast", // NSW
+     "gold coast", "sunshine coast", "toowoomba", // QLD
+     "launceston", "burnie", "devonport", // TAS
+     "fremantle", "mandurah", "bunbury", "albany", "geraldton" // WA
+    ].includes(cityKey);
 
-    // Coffee Quality (always high in Melbourne!)
-    stories.push({
-      title: "Coffee Quality",
-      value: "11/10",
-      type: "bar",
-      color: "bg-amber-700",
-    });
-
-    // Yarra River Conditions (based on rainfall)
-    let yarraStatus = "Normal";
-    let yarraColor = "text-blue-500";
-    if (weather.precipitationSum > 30) {
-      yarraStatus = "High";
-      yarraColor = "text-red-500";
-    } else if (weather.precipitationSum > 15 || weather.rainProb > 70) {
-      yarraStatus = "Elevated";
-      yarraColor = "text-yellow-500";
-    }
-    stories.push({
-      title: "Yarra River Level",
-      value: yarraStatus,
-      type: "text",
-      color: yarraColor,
-    });
-
-    // Bushfire Danger (Melbourne/Victoria is bushfire prone)
-    // NOTE: Currently calculated from weather conditions (temp, humidity, wind)
-    // Ideally should use real fire danger ratings from CFA/VicEmergency or BOM
-    // Real APIs typically require authentication or are not publicly available
-    // Only show in fire season or when conditions are dangerous
-    const month = new Date().getMonth();
-    const isFireSeason = month >= 10 || month <= 2; // Nov-Mar
-    
-    let fireDanger = 0;
-    if (weather.temp > 35) fireDanger += 4;
-    else if (weather.temp > 30) fireDanger += 3;
-    else if (weather.temp > 25) fireDanger += 2;
-    
-    if (weather.humidity < 20) fireDanger += 4;
-    else if (weather.humidity < 30) fireDanger += 3;
-    else if (weather.humidity < 40) fireDanger += 2;
-    
-    if (weather.windSpeed > 50) fireDanger += 3;
-    else if (weather.windSpeed > 35) fireDanger += 2;
-    else if (weather.windSpeed > 25) fireDanger += 1;
-    
-    if (isFireSeason || fireDanger >= 6) {
-      let fireLevel = "Low";
-      let fireColor = "text-green-500";
-      
-      if (fireDanger >= 10) {
-        fireLevel = "Catastrophic";
-        fireColor = "text-red-600";
-      } else if (fireDanger >= 8) {
-        fireLevel = "Extreme";
-        fireColor = "text-red-500";
-      } else if (fireDanger >= 6) {
-        fireLevel = "Severe";
-        fireColor = "text-orange-500";
-      } else if (fireDanger >= 4) {
-        fireLevel = "High";
-        fireColor = "text-yellow-500";
-      } else if (fireDanger >= 2) {
-        fireLevel = "Moderate";
-        fireColor = "text-blue-500";
-      }
-      
-      stories.push({
-        title: "Bushfire Danger",
-        value: fireLevel,
-        type: "text",
-        color: fireColor,
-      });
-    }
-  }
-
-  if (cityKey === "sydney") {
-    // Beach Day Score (enhanced with marine data)
-    let beachScore = 10;
-    if (weather.condition === "rainy" || weather.condition === "stormy") beachScore -= 5;
-    if (weather.temp < 20) beachScore -= 2;
-    if (weather.temp < 18) beachScore -= 1;
-    if (weather.windSpeed > 30) beachScore -= 2;
-    if (weather.uvIndex > 10) beachScore -= 1; // Too dangerous
-    if (weather.marineData && weather.marineData.wave_height > 2) beachScore -= 1; // Rough seas
-    beachScore = Math.max(0, Math.min(10, beachScore));
-    
-    stories.push({
-      title: "Beach Day Score",
-      value: `${beachScore}/10`,
-      type: "bar",
-      color: beachScore > 7 ? "bg-yellow-500" : beachScore > 4 ? "bg-orange-400" : "bg-gray-400",
-    });
-
-    // Surf Conditions (if marine data available)
-    if (weather.marineData) {
-      const waveHeight = weather.marineData.wave_height;
-      let surfCondition = "Flat";
-      let surfColor = "text-gray-400";
-      if (waveHeight > 2.5) {
-        surfCondition = "Epic";
-        surfColor = "text-green-500";
-      } else if (waveHeight > 1.5) {
-        surfCondition = "Good";
-        surfColor = "text-blue-500";
-      } else if (waveHeight > 0.5) {
-        surfCondition = "Okay";
-        surfColor = "text-yellow-500";
-      }
-      stories.push({
-        title: "Surf Conditions",
-        value: surfCondition,
-        type: "text",
-        color: surfColor,
-      });
-    }
-
-    // Humidity with comfort level
-    const humidityComfort = weather.humidity > 80 ? "Oppressive" : 
-                           weather.humidity > 70 ? "Uncomfortable" : 
-                           weather.humidity > 50 ? "Moderate" : "Comfortable";
-    stories.push({
-      title: "Humidity",
-      value: humidityComfort,
-      type: "text",
-      color: weather.humidity > 80 ? "text-red-400" : 
-             weather.humidity > 70 ? "text-orange-400" : 
-             weather.humidity > 50 ? "text-yellow-400" : "text-green-400",
-    });
-
-    // Bushfire Danger (Sydney/NSW is very bushfire prone - Black Summer 2019-2020)
-    // NOTE: Currently calculated from weather conditions
-    // Ideally should use real fire danger ratings from NSW RFS or BOM
-    const month = new Date().getMonth();
-    const isFireSeason = month >= 9 || month <= 2; // Oct-Mar (longer season for NSW)
+  if (fireProneCity) {
+    const isFireSeason = month >= 9 || month <= 2; // Oct-Mar
     
     let fireDanger = 0;
     if (weather.temp > 38) fireDanger += 4;
@@ -691,7 +547,9 @@ function calculateDynamicStories(cityKey: string, weather: {
     
     if (weather.windSpeed > 50) fireDanger += 3;
     else if (weather.windSpeed > 35) fireDanger += 2;
+    else if (weather.windSpeed > 25) fireDanger += 1;
     
+    // Only show if it's fire season OR conditions are dangerous
     if (isFireSeason || fireDanger >= 6) {
       let fireLevel = "Low";
       let fireColor = "text-green-500";
@@ -718,21 +576,13 @@ function calculateDynamicStories(cityKey: string, weather: {
         value: fireLevel,
         type: "text",
         color: fireColor,
+        priority: fireDanger >= 6 ? 1 : 2, // Critical if severe+
       });
     }
   }
 
-  if (cityKey === "brisbane") {
-    // Humidity (Brisbane is known for humidity)
-    const humidityPercent = Math.round(weather.humidity);
-    stories.push({
-      title: "Humidity",
-      value: `${humidityPercent}%`,
-      type: "bar",
-      color: humidityPercent > 80 ? "bg-red-500" : humidityPercent > 60 ? "bg-orange-500" : "bg-green-500",
-    });
-
-    // Storm Risk (enhanced)
+  // Storm Risk - Brisbane and QLD cities
+  if (["brisbane", "gold coast", "sunshine coast", "cairns", "townsville", "toowoomba"].includes(cityKey)) {
     let stormRisk = "Low";
     let stormColor = "text-green-500";
     let stormScore = 0;
@@ -740,8 +590,8 @@ function calculateDynamicStories(cityKey: string, weather: {
     if (weather.condition === "stormy") stormScore += 4;
     if (weather.humidity > 75) stormScore += 1;
     if (weather.rainProb > 60) stormScore += 2;
-    if (weather.pressure < 1010) stormScore += 1; // Low pressure system
-    if (weather.temp > 30 && weather.humidity > 60) stormScore += 2; // Thunderstorm conditions
+    if (weather.pressure < 1010) stormScore += 1;
+    if (weather.temp > 30 && weather.humidity > 60) stormScore += 2;
     
     if (stormScore >= 5) {
       stormRisk = "High";
@@ -756,47 +606,150 @@ function calculateDynamicStories(cityKey: string, weather: {
       value: stormRisk,
       type: "text",
       color: stormColor,
+      priority: stormScore >= 5 ? 1 : 3,
     });
+  }
 
-    // Brisbane River Level (enhanced with precipitation data)
+  // River/Flood warnings
+  if (cityKey === "brisbane") {
     let riverStatus = "Normal";
     let riverColor = "text-blue-500";
+    let riverPriority = 4;
+    
     if (weather.precipitationSum > 50) {
       riverStatus = "Flood Watch";
       riverColor = "text-red-500";
+      riverPriority = 1; // Critical!
     } else if (weather.precipitationSum > 25 || weather.rainProb > 80) {
       riverStatus = "Rising";
       riverColor = "text-orange-500";
+      riverPriority = 2;
     } else if (weather.precipitationSum > 10 || weather.rainProb > 60) {
       riverStatus = "Elevated";
       riverColor = "text-yellow-500";
+      riverPriority = 3;
     }
+    
     stories.push({
       title: "River Level",
       value: riverStatus,
       type: "text",
       color: riverColor,
+      priority: riverPriority,
     });
   }
 
-  if (cityKey === "perth") {
-    // Beach Perfect Index
-    let beachScore = 10;
-    if (weather.condition === "rainy" || weather.condition === "stormy") beachScore -= 5;
-    if (weather.temp < 18) beachScore -= 2;
-    if (weather.windSpeed > 35) beachScore -= 2;
-    if (weather.uvIndex > 11) beachScore -= 1;
-    beachScore = Math.max(0, Math.min(10, beachScore));
+  if (cityKey === "melbourne") {
+    let yarraStatus = "Normal";
+    let yarraColor = "text-blue-500";
+    let yarraPriority = 4;
+    
+    if (weather.precipitationSum > 30) {
+      yarraStatus = "High";
+      yarraColor = "text-red-500";
+      yarraPriority = 1;
+    } else if (weather.precipitationSum > 15 || weather.rainProb > 70) {
+      yarraStatus = "Elevated";
+      yarraColor = "text-yellow-500";
+      yarraPriority = 3;
+    }
     
     stories.push({
-      title: "Beach Perfect",
-      value: beachScore >= 8 ? "Yes" : beachScore >= 5 ? "Maybe" : "No",
+      title: "Yarra River Level",
+      value: yarraStatus,
       type: "text",
-      color: beachScore >= 8 ? "text-blue-500" : beachScore >= 5 ? "text-yellow-500" : "text-gray-500",
+      color: yarraColor,
+      priority: yarraPriority,
     });
+  }
 
-    // Fremantle Doctor Wind (afternoon sea breeze)
-    const hour = new Date().getHours();
+  // ============================================
+  // PRIORITY 2: HEALTH INDICATORS
+  // ============================================
+
+  // UV Index - CRITICAL for Australia (skin cancer capital of the world)
+  const uvLevel = weather.uvIndex > 10 ? "Extreme" : 
+                  weather.uvIndex > 7 ? "Very High" : 
+                  weather.uvIndex > 5 ? "High" : 
+                  weather.uvIndex > 2 ? "Moderate" : "Low";
+  const uvColor = weather.uvIndex > 10 ? "text-purple-600" :
+                  weather.uvIndex > 7 ? "text-red-500" :
+                  weather.uvIndex > 5 ? "text-orange-500" :
+                  weather.uvIndex > 2 ? "text-yellow-500" : "text-green-500";
+  
+  stories.push({
+    title: "UV Index",
+    value: uvLevel,
+    type: "text",
+    color: uvColor,
+    priority: weather.uvIndex > 7 ? 1 : 2, // Critical if Very High+
+  });
+
+  // Humidity comfort - important in humid cities
+  if (["sydney", "brisbane", "cairns", "townsville", "gold coast", "sunshine coast"].includes(cityKey)) {
+    const humidityComfort = weather.humidity > 80 ? "Oppressive" : 
+                           weather.humidity > 70 ? "Uncomfortable" : 
+                           weather.humidity > 50 ? "Moderate" : "Comfortable";
+    stories.push({
+      title: "Humidity",
+      value: cityKey === "brisbane" ? `${Math.round(weather.humidity)}%` : humidityComfort,
+      type: cityKey === "brisbane" ? "bar" : "text",
+      color: cityKey === "brisbane" 
+        ? (weather.humidity > 80 ? "bg-red-500" : weather.humidity > 60 ? "bg-orange-500" : "bg-green-500")
+        : (weather.humidity > 80 ? "text-red-400" : 
+           weather.humidity > 70 ? "text-orange-400" : 
+           weather.humidity > 50 ? "text-yellow-400" : "text-green-400"),
+      priority: 2,
+    });
+  }
+
+  // ============================================
+  // PRIORITY 3: PRACTICAL/DAILY PLANNING
+  // ============================================
+
+  // Umbrella Index - everyone needs this
+  const umbrellaIndex = Math.min(10, Math.round(weather.rainProb / 10));
+  stories.push({
+    title: "Umbrella Index",
+    value: `${umbrellaIndex}/10`,
+    type: "bar",
+    color: umbrellaIndex > 6 ? "bg-blue-500" : umbrellaIndex > 3 ? "bg-blue-400" : "bg-green-500",
+    priority: umbrellaIndex > 6 ? 2 : 3, // Higher priority if rain likely
+  });
+
+  // Melbourne Tram Delays
+  if (cityKey === "melbourne") {
+    let tramDelay = "Low";
+    let tramColor = "text-green-500";
+    let tramDelayScore = 0;
+    
+    if (weather.condition === "stormy") tramDelayScore += 4;
+    else if (weather.condition === "rainy") tramDelayScore += 2;
+    if (weather.windSpeed > 40) tramDelayScore += 3;
+    else if (weather.windSpeed > 25) tramDelayScore += 1;
+    if (weather.windGusts > 60) tramDelayScore += 2;
+    if (weather.visibility < 1000) tramDelayScore += 2;
+    if (weather.precipitationSum > 10) tramDelayScore += 2;
+    
+    if (tramDelayScore >= 5) {
+      tramDelay = "High";
+      tramColor = "text-red-500";
+    } else if (tramDelayScore >= 2) {
+      tramDelay = "Moderate";
+      tramColor = "text-yellow-500";
+    }
+    
+    stories.push({
+      title: "Tram Delays",
+      value: tramDelay,
+      type: "text",
+      color: tramColor,
+      priority: tramDelayScore >= 5 ? 2 : 3,
+    });
+  }
+
+  // Perth Fremantle Doctor - important for afternoon planning
+  if (["perth", "fremantle"].includes(cityKey)) {
     const isAfternoon = hour >= 12 && hour <= 18;
     const isDoctorTime = isAfternoon && weather.windSpeed > 20 && weather.windSpeed < 40;
     
@@ -805,27 +758,80 @@ function calculateDynamicStories(cityKey: string, weather: {
       value: isDoctorTime ? "Blowing" : isAfternoon ? "Expected" : "Later",
       type: "text",
       color: isDoctorTime ? "text-blue-500" : "text-gray-400",
-    });
-
-    // Isolation Level (Perth is the most isolated city on Earth)
-    stories.push({
-      title: "Isolation Level",
-      value: "Maximum",
-      type: "text",
-      color: "text-orange-500",
-    });
-
-    // Mining Boom Indicator (WA economy)
-    stories.push({
-      title: "Mining Boom",
-      value: "8/10",
-      type: "bar",
-      color: "bg-yellow-600",
+      priority: 3,
     });
   }
 
-  if (cityKey === "tasmania" || cityKey === "hobart") {
-    // Fireplace Index - based on temperature, wind, and humidity
+  // ============================================
+  // PRIORITY 4: OUTDOOR ACTIVITIES
+  // ============================================
+
+  // Beach scores for coastal cities
+  if (["sydney", "perth", "gold coast", "sunshine coast", "newcastle", "wollongong", "fremantle", "mandurah", "bunbury", "cairns", "townsville"].includes(cityKey)) {
+    let beachScore = 10;
+    if (weather.condition === "rainy" || weather.condition === "stormy") beachScore -= 5;
+    if (weather.temp < 20) beachScore -= 2;
+    if (weather.temp < 18) beachScore -= 1;
+    if (weather.windSpeed > 30) beachScore -= 2;
+    if (weather.uvIndex > 10) beachScore -= 1;
+    if (weather.marineData && weather.marineData.wave_height > 2) beachScore -= 1;
+    beachScore = Math.max(0, Math.min(10, beachScore));
+    
+    const isPerth = ["perth", "fremantle", "mandurah", "bunbury"].includes(cityKey);
+    stories.push({
+      title: isPerth ? "Beach Perfect" : "Beach Day Score",
+      value: isPerth ? (beachScore >= 8 ? "Yes" : beachScore >= 5 ? "Maybe" : "No") : `${beachScore}/10`,
+      type: isPerth ? "text" : "bar",
+      color: isPerth 
+        ? (beachScore >= 8 ? "text-blue-500" : beachScore >= 5 ? "text-yellow-500" : "text-gray-500")
+        : (beachScore > 7 ? "bg-yellow-500" : beachScore > 4 ? "bg-orange-400" : "bg-gray-400"),
+      priority: 4,
+    });
+  }
+
+  // Surf Conditions for Sydney
+  if (cityKey === "sydney" && weather.marineData) {
+    const waveHeight = weather.marineData.wave_height;
+    let surfCondition = "Flat";
+    let surfColor = "text-gray-400";
+    if (waveHeight > 2.5) {
+      surfCondition = "Epic";
+      surfColor = "text-green-500";
+    } else if (waveHeight > 1.5) {
+      surfCondition = "Good";
+      surfColor = "text-blue-500";
+    } else if (waveHeight > 0.5) {
+      surfCondition = "Okay";
+      surfColor = "text-yellow-500";
+    }
+    stories.push({
+      title: "Surf Conditions",
+      value: surfCondition,
+      type: "text",
+      color: surfColor,
+      priority: 4,
+    });
+  }
+
+  // Tasmania Hiking Conditions
+  if (["hobart", "tasmania", "launceston", "burnie", "devonport"].includes(cityKey)) {
+    let hikingScore = 10;
+    if (weather.condition === "rainy" || weather.condition === "stormy") hikingScore -= 4;
+    if (weather.condition === "snow") hikingScore -= 3;
+    if (weather.windSpeed > 40) hikingScore -= 3;
+    if (weather.visibility < 5000) hikingScore -= 2;
+    if (weather.temp < 5) hikingScore -= 2;
+    hikingScore = Math.max(0, Math.min(10, hikingScore));
+    
+    stories.push({
+      title: "Hiking Conditions",
+      value: hikingScore >= 7 ? "Excellent" : hikingScore >= 5 ? "Good" : hikingScore >= 3 ? "Fair" : "Poor",
+      type: "text",
+      color: hikingScore >= 7 ? "text-green-500" : hikingScore >= 5 ? "text-blue-500" : hikingScore >= 3 ? "text-yellow-500" : "text-red-500",
+      priority: 4,
+    });
+
+    // Fireplace Index - Tassie essential
     let fireplaceIndex = 0;
     if (weather.temp < 8) fireplaceIndex = 10;
     else if (weather.temp < 12) fireplaceIndex = 9;
@@ -834,11 +840,8 @@ function calculateDynamicStories(cityKey: string, weather: {
     else if (weather.temp < 22) fireplaceIndex = 3;
     else fireplaceIndex = 1;
     
-    // Wind chill factor
     if (weather.windSpeed > 30) fireplaceIndex = Math.min(10, fireplaceIndex + 2);
     else if (weather.windSpeed > 20) fireplaceIndex = Math.min(10, fireplaceIndex + 1);
-    
-    // Humidity factor (dry air feels colder)
     if (weather.humidity < 40) fireplaceIndex = Math.min(10, fireplaceIndex + 1);
     
     stories.push({
@@ -846,15 +849,50 @@ function calculateDynamicStories(cityKey: string, weather: {
       value: `${fireplaceIndex}/10`,
       type: "bar",
       color: fireplaceIndex > 7 ? "bg-orange-600" : fireplaceIndex > 4 ? "bg-orange-400" : "bg-yellow-400",
+      priority: 4,
     });
+  }
 
-    // Aurora Chance (enhanced - better in winter, clear skies, low light pollution)
+  // ============================================
+  // PRIORITY 5: FUN GIMMICKS & LOCAL FLAVOR
+  // ============================================
+
+  // Melbourne Coffee Quality
+  if (cityKey === "melbourne") {
+    stories.push({
+      title: "Coffee Quality",
+      value: "11/10",
+      type: "bar",
+      color: "bg-amber-700",
+      priority: 5,
+    });
+  }
+
+  // Perth Isolation & Mining
+  if (cityKey === "perth") {
+    stories.push({
+      title: "Isolation Level",
+      value: "Maximum",
+      type: "text",
+      color: "text-orange-500",
+      priority: 5,
+    });
+    stories.push({
+      title: "Mining Boom",
+      value: "8/10",
+      type: "bar",
+      color: "bg-yellow-600",
+      priority: 5,
+    });
+  }
+
+  // Tasmania Aurora & Oysters
+  if (["hobart", "tasmania", "launceston", "kingston"].includes(cityKey)) {
+    const isWinter = month >= 4 && month <= 8;
+    const isNight = hour >= 20 || hour <= 5;
+    
     let auroraChance = "Low";
     let auroraColor = "text-gray-400";
-    const month = new Date().getMonth();
-    const isWinter = month >= 4 && month <= 8; // May to September
-    const hour = new Date().getHours();
-    const isNight = hour >= 20 || hour <= 5;
     
     if (isWinter && weather.condition === "clear" && weather.cloudCover < 20) {
       if (isNight) {
@@ -874,50 +912,85 @@ function calculateDynamicStories(cityKey: string, weather: {
       value: auroraChance,
       type: "text",
       color: auroraColor,
+      priority: auroraChance === "Good" ? 4 : 5, // Higher if good chance!
     });
 
-    // Oyster Quality (seasonal - best in cooler months)
-    const oysterSeason = month >= 3 && month <= 10; // April to November
+    const oysterSeason = month >= 3 && month <= 10;
     stories.push({
       title: "Oyster Quality",
       value: oysterSeason ? "Peak" : "Good",
       type: "text",
       color: oysterSeason ? "text-teal-500" : "text-teal-400",
-    });
-
-    // Hiking Conditions
-    let hikingScore = 10;
-    if (weather.condition === "rainy" || weather.condition === "stormy") hikingScore -= 4;
-    if (weather.condition === "snow") hikingScore -= 3;
-    if (weather.windSpeed > 40) hikingScore -= 3;
-    if (weather.visibility < 5000) hikingScore -= 2;
-    if (weather.temp < 5) hikingScore -= 2;
-    hikingScore = Math.max(0, Math.min(10, hikingScore));
-    
-    stories.push({
-      title: "Hiking Conditions",
-      value: hikingScore >= 7 ? "Excellent" : hikingScore >= 5 ? "Good" : hikingScore >= 3 ? "Fair" : "Poor",
-      type: "text",
-      color: hikingScore >= 7 ? "text-green-500" : hikingScore >= 5 ? "text-blue-500" : hikingScore >= 3 ? "text-yellow-500" : "text-red-500",
+      priority: 5,
     });
   }
 
-  // UV Index for all cities (Australia is notorious for UV!)
-  const uvLevel = weather.uvIndex > 10 ? "Extreme" : 
-                  weather.uvIndex > 7 ? "Very High" : 
-                  weather.uvIndex > 5 ? "High" : 
-                  weather.uvIndex > 2 ? "Moderate" : "Low";
-  const uvColor = weather.uvIndex > 10 ? "text-purple-600" :
-                  weather.uvIndex > 7 ? "text-red-500" :
-                  weather.uvIndex > 5 ? "text-orange-500" :
-                  weather.uvIndex > 2 ? "text-yellow-500" : "text-green-500";
-  
-  stories.push({
-    title: "UV Index",
-    value: uvLevel,
-    type: "text",
-    color: uvColor,
-  });
+  // Cairns stinger season warning
+  if (["cairns", "townsville"].includes(cityKey)) {
+    const isStingerSeason = month >= 10 || month <= 4; // Nov-May
+    if (isStingerSeason) {
+      stories.push({
+        title: "Stinger Season",
+        value: "Active",
+        type: "text",
+        color: "text-red-500",
+        priority: 2, // Health warning!
+      });
+    }
+  }
 
-  return stories;
+  // Geelong Cats reference
+  if (cityKey === "geelong") {
+    stories.push({
+      title: "Cats Pride",
+      value: "Forever",
+      type: "text",
+      color: "text-blue-600",
+      priority: 5,
+    });
+  }
+
+  // Gold Coast meter maids
+  if (cityKey === "gold coast") {
+    const isWeekend = new Date().getDay() === 0 || new Date().getDay() === 6;
+    stories.push({
+      title: "Meter Maids",
+      value: isWeekend ? "Busy" : "Around",
+      type: "text",
+      color: "text-yellow-500",
+      priority: 5,
+    });
+  }
+
+  // Canberra politics
+  if (cityKey === "canberra") {
+    const isWeekday = new Date().getDay() >= 1 && new Date().getDay() <= 5;
+    stories.push({
+      title: "Parliament Sitting",
+      value: isWeekday ? "Likely" : "Recess",
+      type: "text",
+      color: isWeekday ? "text-blue-500" : "text-gray-400",
+      priority: 5,
+    });
+  }
+
+  // Blue Mountains Three Sisters
+  if (cityKey === "blue mountains") {
+    const visibility = weather.visibility > 10000 ? "Crystal Clear" :
+                       weather.visibility > 5000 ? "Good" :
+                       weather.visibility > 2000 ? "Misty" : "Foggy";
+    stories.push({
+      title: "Three Sisters View",
+      value: visibility,
+      type: "text",
+      color: weather.visibility > 5000 ? "text-green-500" : "text-gray-400",
+      priority: 4,
+    });
+  }
+
+  // Sort stories by priority and return (without priority field)
+  stories.sort((a, b) => a.priority - b.priority);
+  
+  // Remove priority field before returning
+  return stories.map(({ priority, ...story }) => story);
 }
