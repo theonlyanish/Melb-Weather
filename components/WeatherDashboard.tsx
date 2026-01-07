@@ -143,29 +143,16 @@ function WeatherDashboard({ initialData, availableCities, defaultCity, regionalC
           </div>
         </div>
         
-        <footer className="text-center text-sm py-12 font-sans space-y-3">
-          <p className="text-slate-500 dark:text-slate-400">
-            Designed with chaos in Australia · Powered by{" "}
-            <a 
-              href="https://open-meteo.com/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="underline underline-offset-2 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
-            >
-              Open-Meteo
-            </a>
-          </p>
-          <p className="text-slate-400 dark:text-slate-500">
-            MelbWeather by{" "}
-            <a 
-              href="https://anishkapse.com/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="font-medium transition-colors duration-200 hover:text-[rgb(218,65,103)]"
-            >
-              Anish Kapse
-            </a>
-          </p>
+        <footer className="text-center text-sm py-12 font-sans text-slate-400 dark:text-slate-500">
+          LocalSky by{" "}
+          <a 
+            href="https://anishkapse.com/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="font-medium transition-colors duration-200 hover:text-[rgb(218,65,103)]"
+          >
+            Anish Kapse
+          </a>
         </footer>
       </div>
     </>
