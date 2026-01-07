@@ -92,10 +92,10 @@ function WeatherDashboard({ initialData, availableCities, defaultCity, regionalC
       {/* Loading Overlay - Only for city switching */}
       {isPending && <LoadingSpinner message="Fetching forecast..." />}
 
-      <div className="max-w-7xl mx-auto space-y-8 relative z-10 pt-16 md:pt-4">
-        <header className="relative pb-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-4">
-            <div className="space-y-2 pl-20 md:pl-0">
+      <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 relative z-10 pt-20 md:pt-4">
+        <header className="relative pb-4 md:pb-8">
+          <div className="flex flex-col items-center md:flex-row md:items-center justify-between gap-4 pt-4">
+            <div className="space-y-2 text-center md:text-left">
               <CitySwitcher 
                 cities={availableCities} 
                 selectedCity={selectedMajorCity} 
@@ -107,7 +107,7 @@ function WeatherDashboard({ initialData, availableCities, defaultCity, regionalC
             </div>
             
             {currentRegionalCities.length > 0 && (
-              <div className="md:self-end">
+              <div className="md:self-end w-full md:w-auto flex justify-center md:block">
                 <RegionalCitySelector 
                   regionalCities={[capitalizeCityName(selectedMajorCity), ...currentRegionalCities]} 
                   selectedCity={selectedRegionalCity} 
@@ -124,8 +124,8 @@ function WeatherDashboard({ initialData, availableCities, defaultCity, regionalC
           </div>
         )}
 
-        <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 transition-opacity duration-200 ${isPending ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
-          <div className="lg:col-span-2 space-y-8">
+        <div className={`grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 transition-opacity duration-200 ${isPending ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
+          <div className="lg:col-span-2 space-y-6 md:space-y-8">
             {locationData ? (
               <>
                 <Hero weather={locationData.current} microtext={locationData.microtext} />
@@ -143,8 +143,29 @@ function WeatherDashboard({ initialData, availableCities, defaultCity, regionalC
           </div>
         </div>
         
-        <footer className="text-center text-slate-400 text-sm py-12 font-sans">
-          <p>Designed with chaos in Australia. Powered by <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600 dark:hover:text-slate-300">Open-Meteo</a>.</p>
+        <footer className="text-center text-sm py-12 font-sans space-y-3">
+          <p className="text-slate-500 dark:text-slate-400">
+            Designed with chaos in Australia · Powered by{" "}
+            <a 
+              href="https://open-meteo.com/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="underline underline-offset-2 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+            >
+              Open-Meteo
+            </a>
+          </p>
+          <p className="text-slate-400 dark:text-slate-500">
+            MelbWeather by{" "}
+            <a 
+              href="https://anishkapse.com/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="font-medium transition-colors duration-200 hover:text-[rgb(218,65,103)]"
+            >
+              Anish Kapse
+            </a>
+          </p>
         </footer>
       </div>
     </>

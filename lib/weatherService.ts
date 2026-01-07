@@ -165,21 +165,20 @@ interface AirQualityResponse {
 
 // Fetch air quality data from Open-Meteo Air Quality API
 // Note: Air quality is currently not displayed in UI, so this is optional
-// Using a short timeout to prevent blocking the main weather fetch
+// Using a very short timeout - if it doesn't respond quickly, skip it
 async function fetchAirQuality(lat: number, lon: number): Promise<AirQualityCurrent | null> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second max
+  
   try {
     const url = new URL("https://air-quality-api.open-meteo.com/v1/air-quality");
     url.searchParams.append("latitude", lat.toString());
     url.searchParams.append("longitude", lon.toString());
     url.searchParams.append("current", "pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone,european_aqi,us_aqi");
     
-    // Add timeout using AbortController (5 seconds max)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-    
     const response = await fetch(url.toString(), {
       signal: controller.signal,
-      next: { revalidate: 600 }, // Cache for 10 minutes
+      cache: 'force-cache', // Prefer cached response
     });
     
     clearTimeout(timeoutId);
@@ -190,11 +189,9 @@ async function fetchAirQuality(lat: number, lon: number): Promise<AirQualityCurr
     
     const data: AirQualityResponse = await response.json();
     return data.current;
-  } catch (error) {
-    // Silently fail - air quality is optional and not displayed
-    if (error instanceof Error && error.name !== 'AbortError') {
-      console.warn("Air quality fetch failed:", error.message);
-    }
+  } catch {
+    // Silently fail - air quality is optional and not displayed in UI
+    clearTimeout(timeoutId);
     return null;
   }
 }
@@ -207,19 +204,18 @@ interface MarineData {
 }
 
 async function fetchMarineData(lat: number, lon: number): Promise<MarineData | null> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second max
+  
   try {
     const url = new URL("https://marine-api.open-meteo.com/v1/marine");
     url.searchParams.append("latitude", lat.toString());
     url.searchParams.append("longitude", lon.toString());
     url.searchParams.append("current", "wave_height,wave_period,wave_direction");
     
-    // Add timeout (5 seconds max)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-    
     const response = await fetch(url.toString(), {
       signal: controller.signal,
-      next: { revalidate: 600 }, // Cache for 10 minutes
+      cache: 'force-cache', // Prefer cached response
     });
     
     clearTimeout(timeoutId);
@@ -230,11 +226,9 @@ async function fetchMarineData(lat: number, lon: number): Promise<MarineData | n
     
     const data = await response.json();
     return data.current;
-  } catch (error) {
+  } catch {
     // Silently fail - marine data is optional
-    if (error instanceof Error && error.name !== 'AbortError') {
-      console.warn("Marine data fetch failed:", error.message);
-    }
+    clearTimeout(timeoutId);
     return null;
   }
 }
@@ -299,45 +293,28 @@ async function fetchForCoordinates(city: { lat: number; lon: number; name: strin
   url.searchParams.append("timezone", city.timezone);
   url.searchParams.append("forecast_days", "7");
 
-  // Fetch ALL data in parallel - weather, air quality, and marine (if applicable)
-  // This significantly reduces total fetch time by running requests concurrently
+  // Fetch weather data - this is the only critical API call
   const weatherController = new AbortController();
-  const weatherTimeoutId = setTimeout(() => weatherController.abort(), 15000);
+  const weatherTimeoutId = setTimeout(() => weatherController.abort(), 10000);
   
-  const fetchWeather = async (): Promise<Response> => {
-    try {
-      const response = await fetch(url.toString(), { 
-        next: { revalidate: 300 },
-        signal: weatherController.signal
-      });
-      clearTimeout(weatherTimeoutId);
-      return response;
-    } catch (error) {
-      clearTimeout(weatherTimeoutId);
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw new Error('Weather API request timed out after 15 seconds');
-      }
-      throw error;
+  let weatherResponse: Response;
+  try {
+    weatherResponse = await fetch(url.toString(), { 
+      next: { revalidate: 300 },
+      signal: weatherController.signal
+    });
+    clearTimeout(weatherTimeoutId);
+  } catch (error) {
+    clearTimeout(weatherTimeoutId);
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Weather API request timed out after 10 seconds');
     }
-  };
-  
-  // Fetch everything in parallel - weather is critical, others are optional
-  const [weatherResult, airQuality, marineData] = await Promise.allSettled([
-    fetchWeather(),
-    fetchAirQuality(city.lat, city.lon),
-    // Only fetch marine data for coastal cities
-    (cityKey === "sydney" || cityKey === "brisbane") ? fetchMarineData(city.lat, city.lon) : Promise.resolve(null)
-  ]);
-  
-  // Extract weather response - this is critical, so we throw if it failed
-  if (weatherResult.status === 'rejected') {
-    throw weatherResult.reason;
+    throw error;
   }
-  const weatherResponse = weatherResult.value;
   
-  // Extract optional results - these can fail silently
-  const airQualityResult = airQuality.status === 'fulfilled' ? airQuality.value : null;
-  const marineDataResult = marineData.status === 'fulfilled' ? marineData.value : null;
+  // Optional data disabled - these APIs were causing timeout issues
+  // Air quality: Not displayed in UI anyway
+  // Marine data: Only used for surf conditions in Sydney, not critical
 
   if (!weatherResponse.ok) {
     throw new Error(`Failed to fetch weather data: ${weatherResponse.statusText}`);
@@ -446,8 +423,8 @@ async function fetchForCoordinates(city: { lat: number; lon: number; name: strin
     visibility: current.visibility,
     cloudCover: current.cloud_cover,
     dewPoint: current.dew_point_2m,
-    airQuality: airQualityResult,
-    marineData: marineDataResult,
+    airQuality: null,
+    marineData: null,
     precipitationSum: daily.precipitation_sum?.[0] || 0,
     maxWindGusts: daily.wind_gusts_10m_max?.[0] || 0,
   });
@@ -473,13 +450,9 @@ async function fetchForCoordinates(city: { lat: number; lon: number; name: strin
     hourly: hourlyForecast,
     daily: dailyForecast,
     stories,
-    // Air quality is fetched but not currently displayed in UI
-    // Keeping it in the response for potential future use
-    airQuality: airQualityResult ? {
-      aqi: airQualityResult.us_aqi,
-      pm25: Math.round(airQualityResult.pm2_5),
-      pm10: Math.round(airQualityResult.pm10),
-    } : null,
+    // Air quality disabled - API was causing timeout issues
+    // Not displayed in UI anyway
+    airQuality: null,
   };
 }
 

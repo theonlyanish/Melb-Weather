@@ -22,18 +22,18 @@ export default function Hero({ weather, microtext }: HeroProps) {
       case "sunny": 
       case "clear":
       case "hot":
-        return <AnimatedSun className="w-40 h-40 text-yellow-400 drop-shadow-lg" />;
+        return <AnimatedSun className="w-32 h-32 md:w-40 md:h-40 text-yellow-400 drop-shadow-lg" />;
       case "rainy": 
-        return <AnimatedRain className="w-40 h-40 text-blue-200 drop-shadow-lg" />;
+        return <AnimatedRain className="w-32 h-32 md:w-40 md:h-40 text-blue-200 drop-shadow-lg" />;
       case "stormy":
-        return <AnimatedStorm className="w-40 h-40 text-purple-200 drop-shadow-lg" />;
+        return <AnimatedStorm className="w-32 h-32 md:w-40 md:h-40 text-purple-200 drop-shadow-lg" />;
       case "snow":
-        return <AnimatedSnow className="w-40 h-40 text-white drop-shadow-lg" />;
+        return <AnimatedSnow className="w-32 h-32 md:w-40 md:h-40 text-white drop-shadow-lg" />;
       case "cloudy": 
       case "overcast":
-        return <AnimatedCloud className="w-40 h-40 text-white/90 drop-shadow-lg" />;
+        return <AnimatedCloud className="w-32 h-32 md:w-40 md:h-40 text-white/90 drop-shadow-lg" />;
       default: 
-        return <AnimatedCloud className="w-40 h-40 text-white/90 drop-shadow-lg" />;
+        return <AnimatedCloud className="w-32 h-32 md:w-40 md:h-40 text-white/90 drop-shadow-lg" />;
     }
   };
 
@@ -79,7 +79,7 @@ export default function Hero({ weather, microtext }: HeroProps) {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} // Elegant ease
-      className={`relative w-full rounded-[3rem] p-8 md:p-12 overflow-hidden ${getGradient(weather.condition)} transition-all duration-500 theme-slow shadow-2xl dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] border border-white/20 dark:border-white/5`}
+      className={`relative w-full rounded-[3rem] p-6 md:p-12 overflow-hidden ${getGradient(weather.condition)} transition-all duration-500 theme-slow shadow-2xl dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] border border-white/20 dark:border-white/5`}
     >
         {/* Subtle Noise Texture on Hero Card - Keep for texture but reduce opacity in dark mode */}
         <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
@@ -113,7 +113,7 @@ export default function Hero({ weather, microtext }: HeroProps) {
            transition={{ delay: 0.3, type: "spring", stiffness: 100 }}
            className="relative"
         >
-            <h1 className="text-[10rem] leading-none font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-slate-700 to-slate-900 dark:from-white dark:to-slate-300 drop-shadow-sm font-display pr-4 pb-2 select-none">
+            <h1 className="text-8xl md:text-[10rem] leading-none font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-slate-700 to-slate-900 dark:from-white dark:to-slate-300 drop-shadow-sm font-display pr-4 pb-2 select-none">
             {weather.temp}°
             </h1>
         </motion.div>
