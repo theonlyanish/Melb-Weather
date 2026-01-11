@@ -99,7 +99,11 @@ export async function GET(request: Request) {
         response[result.cityKey] = { data: result.data, error: result.error };
       }
       
-      return NextResponse.json(response);
+      return NextResponse.json(response, {
+        headers: {
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60',
+        },
+      });
     }
     
     // Single city request
@@ -112,7 +116,12 @@ export async function GET(request: Request) {
       );
     }
 
-    return NextResponse.json(result.data);
+    // Cache weather data for 5 minutes, allow stale for 1 min while revalidating
+    return NextResponse.json(result.data, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60',
+      },
+    });
   } catch (error) {
     console.error("Error in weather API:", error);
     if (error instanceof Error) {

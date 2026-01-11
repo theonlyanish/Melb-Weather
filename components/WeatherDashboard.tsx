@@ -84,8 +84,8 @@ function WeatherDashboard({ initialData, availableCities, defaultCity, regionalC
 
   return (
     <>
-      {/* Theme Switcher - Fixed Top Left */}
-      <div className="fixed top-4 left-4 z-50 md:top-8 md:left-8">
+      {/* Theme Switcher - Absolute Top Left */}
+      <div className="absolute top-4 left-4 z-50 md:top-8 md:left-8">
         <ThemeToggle />
       </div>
       

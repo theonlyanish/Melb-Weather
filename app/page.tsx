@@ -5,8 +5,9 @@ import { fetchWeatherData } from "@/lib/weatherService";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
-// Enable ISR - revalidate every 10 minutes for fresh weather data
-export const revalidate = 600;
+// Enable ISR - revalidate every 5 minutes for fresh weather data
+// Must be ≤ the API fetch cache (300s) to avoid stale data
+export const revalidate = 300;
 
 // Helper to get the normalized city key for microtext lookup
 function getNormalizedCityKey(cityKey: string): string {
