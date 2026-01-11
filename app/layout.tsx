@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Epilogue, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { Analytics } from "@vercel/analytics/next";
 
 const epilogue = Epilogue({
   variable: "--font-epilogue",
@@ -109,6 +110,7 @@ export default function RootLayout({
           >
             {children}
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
