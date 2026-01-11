@@ -16,8 +16,80 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Melbourne Weather",
-  description: "A dashboard for Melbourne's chaotic weather.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://localsky.app'),
+  title: {
+    default: "LocalSky - Australian Weather Forecast | Melbourne, Sydney, Brisbane & More",
+    template: "%s | LocalSky"
+  },
+  description: "Get accurate weather forecasts for Australian cities including Melbourne, Sydney, Brisbane, Perth, and Hobart. Real-time weather data, hourly forecasts, air quality, and local weather stories with personality.",
+  keywords: [
+    "Australian weather",
+    "Melbourne weather",
+    "Sydney weather",
+    "Brisbane weather",
+    "Perth weather",
+    "Hobart weather",
+    "weather forecast Australia",
+    "Australian weather app",
+    "weather dashboard",
+    "hourly weather forecast",
+    "daily weather forecast",
+    "air quality Australia",
+    "weather stories",
+    "local weather",
+    "regional weather Australia"
+  ],
+  authors: [{ name: "Anish Kapse", url: "https://anishkapse.com" }],
+  creator: "Anish Kapse",
+  publisher: "LocalSky",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_AU",
+    url: "/",
+    siteName: "LocalSky",
+    title: "LocalSky - Australian Weather Forecast",
+    description: "Get accurate weather forecasts for Australian cities with real-time data, hourly forecasts, and local weather stories.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "LocalSky - Australian Weather Forecast",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "LocalSky - Australian Weather Forecast",
+    description: "Get accurate weather forecasts for Australian cities with real-time data and local weather stories.",
+    images: ["/og-image.png"],
+    creator: "@anishkapse",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    // Add your verification codes here when available
+    // google: "your-google-verification-code",
+    // yandex: "your-yandex-verification-code",
+  },
+  alternates: {
+    canonical: "/",
+  },
+  category: "Weather",
 };
 
 export default function RootLayout({
@@ -26,7 +98,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en-AU" suppressHydrationWarning>
       <body
         className={`${epilogue.variable} ${inter.variable} antialiased font-sans`}
       >

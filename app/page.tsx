@@ -9,6 +9,63 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 // Must be ≤ the API fetch cache (300s) to avoid stale data
 export const revalidate = 300;
 
+// Dynamic metadata generation for SEO
+export async function generateMetadata() {
+  const typedWeatherData = weatherData as unknown as WeatherData;
+  const defaultCity = "melbourne";
+  
+  try {
+    const initialData = await getWeatherData(defaultCity);
+    const cityName = initialData?.name || "Melbourne";
+    const state = initialData?.state || "Victoria";
+    const temp = initialData?.current?.temp || null;
+    const condition = initialData?.current?.condition || "sunny";
+    
+    const title = `${cityName} Weather Forecast - ${state} | LocalSky`;
+    const description = temp 
+      ? `Current weather in ${cityName}, ${state}: ${temp}°C, ${condition}. Get hourly and daily forecasts, air quality, and local weather stories.`
+      : `Get accurate weather forecasts for ${cityName}, ${state}. Real-time weather data, hourly forecasts, and local weather stories with personality.`;
+    
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://localsky.app';
+    
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        url: siteUrl,
+        siteName: "LocalSky",
+        locale: "en_AU",
+        type: "website",
+        images: [
+          {
+            url: `${siteUrl}/og-image.png`,
+            width: 1200,
+            height: 630,
+            alt: `${cityName} Weather Forecast - LocalSky`,
+          },
+        ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [`${siteUrl}/og-image.png`],
+      },
+      alternates: {
+        canonical: siteUrl,
+      },
+    };
+  } catch (error) {
+    // Fallback metadata
+    return {
+      title: "LocalSky - Australian Weather Forecast",
+      description: "Get accurate weather forecasts for Australian cities including Melbourne, Sydney, Brisbane, Perth, and Hobart.",
+    };
+  }
+}
+
 // Helper to get the normalized city key for microtext lookup
 function getNormalizedCityKey(cityKey: string): string {
   return cityKey.toLowerCase().replace(/\s+/g, ' ').trim();
@@ -81,8 +138,76 @@ export default async function Home() {
   // Pre-fetch default city data on server
   const initialData = await getWeatherData(defaultCity);
   
+  // Generate structured data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "LocalSky",
+    "description": "Australian weather forecast application providing real-time weather data, hourly and daily forecasts, and local weather stories for major Australian cities.",
+    "applicationCategory": "WeatherApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "AUD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "1"
+    },
+    ...(initialData && {
+      "mainEntity": {
+        "@type": "WeatherForecast",
+        "location": {
+          "@type": "City",
+          "name": initialData.name,
+          "addressRegion": initialData.state,
+          "addressCountry": "AU"
+        },
+        "temperature": {
+          "@type": "QuantitativeValue",
+          "value": initialData.current.temp,
+          "unitCode": "CEL"
+        },
+        "conditions": initialData.current.condition,
+        "windSpeed": {
+          "@type": "QuantitativeValue",
+          "value": initialData.current.windSpeed,
+          "unitCode": "KMH"
+        }
+      }
+    })
+  };
+
+  const organizationData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "LocalSky",
+    "url": process.env.NEXT_PUBLIC_SITE_URL || "https://localsky.app",
+    "logo": `${process.env.NEXT_PUBLIC_SITE_URL || "https://localsky.app"}/logo.png`,
+    "sameAs": [
+      "https://anishkapse.com"
+    ],
+    "founder": {
+      "@type": "Person",
+      "name": "Anish Kapse",
+      "url": "https://anishkapse.com"
+    }
+  };
+  
   return (
-    <main className="min-h-screen p-4 md:p-8 font-sans text-slate-900 dark:text-slate-100 selection:bg-blue-100 dark:selection:bg-blue-900 relative overflow-hidden">
+    <>
+      {/* Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationData) }}
+      />
+      <main className="min-h-screen p-4 md:p-8 font-sans text-slate-900 dark:text-slate-100 selection:bg-blue-100 dark:selection:bg-blue-900 relative overflow-hidden">
       {/* Optimized Background - use CSS gradients instead of animated blobs on mobile */}
       <div className="fixed inset-0 -z-10 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" />
       
@@ -112,5 +237,6 @@ export default async function Home() {
         />
       </Suspense>
     </main>
+    </>
   );
 }

@@ -22,19 +22,19 @@ export default function Hero({ weather, microtext }: HeroProps) {
       case "sunny": 
       case "clear":
       case "hot":
-        return <AnimatedSun className="w-32 h-32 md:w-40 md:h-40 text-yellow-400 drop-shadow-lg" />;
+        return <AnimatedSun className="w-32 h-32 md:w-40 md:h-40 text-yellow-400 drop-shadow-lg" aria-label="Sunny weather" />;
       case "rainy": 
         // Show just cloud icon since we have background rain animation
-        return <AnimatedCloud className="w-32 h-32 md:w-40 md:h-40 text-blue-200 drop-shadow-lg" />;
+        return <AnimatedCloud className="w-32 h-32 md:w-40 md:h-40 text-blue-200 drop-shadow-lg" aria-label="Rainy weather" />;
       case "stormy":
-        return <AnimatedStorm className="w-32 h-32 md:w-40 md:h-40 text-purple-200 drop-shadow-lg" />;
+        return <AnimatedStorm className="w-32 h-32 md:w-40 md:h-40 text-purple-200 drop-shadow-lg" aria-label="Stormy weather" />;
       case "snow":
-        return <AnimatedSnow className="w-32 h-32 md:w-40 md:h-40 text-white drop-shadow-lg" />;
+        return <AnimatedSnow className="w-32 h-32 md:w-40 md:h-40 text-white drop-shadow-lg" aria-label="Snowy weather" />;
       case "cloudy": 
       case "overcast":
-        return <AnimatedCloud className="w-32 h-32 md:w-40 md:h-40 text-white/90 drop-shadow-lg" />;
+        return <AnimatedCloud className="w-32 h-32 md:w-40 md:h-40 text-white/90 drop-shadow-lg" aria-label="Cloudy weather" />;
       default: 
-        return <AnimatedCloud className="w-32 h-32 md:w-40 md:h-40 text-white/90 drop-shadow-lg" />;
+        return <AnimatedCloud className="w-32 h-32 md:w-40 md:h-40 text-white/90 drop-shadow-lg" aria-label="Cloudy weather" />;
     }
   };
 

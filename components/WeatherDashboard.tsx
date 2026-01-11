@@ -132,19 +132,23 @@ function WeatherDashboard({ initialData, availableCities, defaultCity, regionalC
           <div className="lg:col-span-2 space-y-6 md:space-y-8">
             {locationData ? (
               <>
-                <Hero weather={locationData.current} microtext={locationData.microtext} />
-                <div className="glass-panel rounded-[2rem] p-2">
+                <section aria-label="Current weather conditions">
+                  <Hero weather={locationData.current} microtext={locationData.microtext} />
+                </section>
+                <section aria-label="Hourly forecast" className="glass-panel rounded-[2rem] p-2">
                   <HourlyScroll data={locationData.hourly} />
-                </div>
-                <WeekCards data={locationData.daily} />
+                </section>
+                <section aria-label="7-day forecast">
+                  <WeekCards data={locationData.daily} />
+                </section>
               </>
             ) : (
               <div className="h-[600px]" />
             )}
           </div>
-          <div className="lg:col-span-1">
+          <aside className="lg:col-span-1" aria-label="Weather stories and local information">
             {locationData && <SidebarStories stories={locationData.stories} cityName={locationData.name} />}
-          </div>
+          </aside>
         </div>
         
         <footer className="text-center text-sm py-12 font-sans text-slate-400 dark:text-slate-500">
