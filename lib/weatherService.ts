@@ -383,8 +383,8 @@ async function fetchForCoordinates(city: { lat: number; lon: number; name: strin
   const dailyForecast = daily.time.slice(0, 7).map((timeStr, index) => {
     const condition = WEATHER_CODE_MAP[daily.weather_code[index]] || "cloudy";
     const mood = condition === "sunny" || condition === "clear" ? "orange" :
-                 condition === "rainy" || condition === "stormy" ? "gray" :
-                 condition === "snow" ? "blue" : "blue";
+                 condition === "rainy" || condition === "stormy" ? "blue" :
+                 condition === "snow" ? "blue" : "gray";
     
     let dayName = "Today";
     if (index > 0) {
@@ -525,23 +525,23 @@ function calculateDynamicStories(cityKey: string, weather: {
     // Only show if it's fire season OR conditions are dangerous
     if (isFireSeason || fireDanger >= 6) {
       let fireLevel = "Low";
-      let fireColor = "text-emerald-600 dark:text-green-500";
+      let fireColor = "text-[hsl(150,55%,35%)] dark:text-green-500";
       
       if (fireDanger >= 10) {
         fireLevel = "Catastrophic";
-        fireColor = "text-red-600";
+        fireColor = "text-[hsl(0,55%,40%)]";
       } else if (fireDanger >= 8) {
         fireLevel = "Extreme";
-        fireColor = "text-red-600 dark:text-red-500";
+        fireColor = "text-[hsl(0,55%,40%)] dark:text-red-500";
       } else if (fireDanger >= 6) {
         fireLevel = "Severe";
-        fireColor = "text-orange-600 dark:text-orange-500";
+        fireColor = "text-[hsl(25,55%,40%)] dark:text-orange-500";
       } else if (fireDanger >= 4) {
         fireLevel = "High";
-        fireColor = "text-amber-600 dark:text-yellow-500";
+        fireColor = "text-[hsl(40,55%,35%)] dark:text-yellow-500";
       } else if (fireDanger >= 2) {
         fireLevel = "Moderate";
-        fireColor = "text-blue-600 dark:text-blue-500";
+        fireColor = "text-[hsl(210,55%,40%)] dark:text-blue-500";
       }
       
       stories.push({
@@ -557,7 +557,7 @@ function calculateDynamicStories(cityKey: string, weather: {
   // Storm Risk - Brisbane and QLD cities
   if (["brisbane", "gold coast", "sunshine coast", "cairns", "townsville", "toowoomba"].includes(cityKey)) {
     let stormRisk = "Low";
-    let stormColor = "text-emerald-600 dark:text-green-500";
+    let stormColor = "text-[hsl(150,55%,35%)] dark:text-green-500";
     let stormScore = 0;
     
     if (weather.condition === "stormy") stormScore += 4;
@@ -568,10 +568,10 @@ function calculateDynamicStories(cityKey: string, weather: {
     
     if (stormScore >= 5) {
       stormRisk = "High";
-      stormColor = "text-purple-600 dark:text-purple-500";
+      stormColor = "text-[hsl(270,55%,40%)] dark:text-purple-500";
     } else if (stormScore >= 2) {
       stormRisk = "Moderate";
-      stormColor = "text-amber-600 dark:text-yellow-500";
+      stormColor = "text-[hsl(40,55%,35%)] dark:text-yellow-500";
     }
     
     stories.push({
@@ -586,20 +586,20 @@ function calculateDynamicStories(cityKey: string, weather: {
   // River/Flood warnings
   if (cityKey === "brisbane") {
     let riverStatus = "Normal";
-    let riverColor = "text-blue-600 dark:text-blue-500";
+    let riverColor = "text-[hsl(210,55%,40%)] dark:text-blue-500";
     let riverPriority = 4;
     
     if (weather.precipitationSum > 50) {
       riverStatus = "Flood Watch";
-      riverColor = "text-red-600 dark:text-red-500";
+      riverColor = "text-[hsl(0,55%,40%)] dark:text-red-500";
       riverPriority = 1; // Critical!
     } else if (weather.precipitationSum > 25 || weather.rainProb > 80) {
       riverStatus = "Rising";
-      riverColor = "text-orange-600 dark:text-orange-500";
+      riverColor = "text-[hsl(25,55%,40%)] dark:text-orange-500";
       riverPriority = 2;
     } else if (weather.precipitationSum > 10 || weather.rainProb > 60) {
       riverStatus = "Elevated";
-      riverColor = "text-amber-600 dark:text-yellow-500";
+      riverColor = "text-[hsl(40,55%,35%)] dark:text-yellow-500";
       riverPriority = 3;
     }
     
@@ -614,16 +614,16 @@ function calculateDynamicStories(cityKey: string, weather: {
 
   if (cityKey === "melbourne") {
     let yarraStatus = "Normal";
-    let yarraColor = "text-blue-600 dark:text-blue-500";
+    let yarraColor = "text-[hsl(210,55%,40%)] dark:text-blue-500";
     let yarraPriority = 4;
     
     if (weather.precipitationSum > 30) {
       yarraStatus = "High";
-      yarraColor = "text-red-600 dark:text-red-500";
+      yarraColor = "text-[hsl(0,55%,40%)] dark:text-red-500";
       yarraPriority = 1;
     } else if (weather.precipitationSum > 15 || weather.rainProb > 70) {
       yarraStatus = "Elevated";
-      yarraColor = "text-amber-600 dark:text-yellow-500";
+      yarraColor = "text-[hsl(40,55%,35%)] dark:text-yellow-500";
       yarraPriority = 3;
     }
     
@@ -645,10 +645,10 @@ function calculateDynamicStories(cityKey: string, weather: {
                   weather.uvIndex > 7 ? "Very High" : 
                   weather.uvIndex > 5 ? "High" : 
                   weather.uvIndex > 2 ? "Moderate" : "Low";
-  const uvColor = weather.uvIndex > 10 ? "text-purple-700 dark:text-purple-600" :
-                  weather.uvIndex > 7 ? "text-red-600 dark:text-red-500" :
-                  weather.uvIndex > 5 ? "text-orange-600 dark:text-orange-500" :
-                  weather.uvIndex > 2 ? "text-amber-600 dark:text-yellow-500" : "text-emerald-600 dark:text-green-500";
+  const uvColor = weather.uvIndex > 10 ? "text-[hsl(270,55%,40%)] dark:text-[hsl(270,55%,40%)]" :
+                  weather.uvIndex > 7 ? "text-[hsl(0,55%,40%)] dark:text-red-500" :
+                  weather.uvIndex > 5 ? "text-[hsl(25,55%,40%)] dark:text-orange-500" :
+                  weather.uvIndex > 2 ? "text-[hsl(40,55%,35%)] dark:text-yellow-500" : "text-[hsl(150,55%,35%)] dark:text-green-500";
   
   stories.push({
     title: "UV Index",
@@ -668,10 +668,10 @@ function calculateDynamicStories(cityKey: string, weather: {
       value: cityKey === "brisbane" ? `${Math.round(weather.humidity)}%` : humidityComfort,
       type: cityKey === "brisbane" ? "bar" : "text",
       color: cityKey === "brisbane" 
-        ? (weather.humidity > 80 ? "bg-red-500" : weather.humidity > 60 ? "bg-orange-600 dark:bg-orange-500" : "bg-emerald-600 dark:bg-green-500")
-        : (weather.humidity > 80 ? "text-red-600 dark:text-red-400" : 
-           weather.humidity > 70 ? "text-orange-600 dark:text-orange-400" : 
-           weather.humidity > 50 ? "text-amber-600 dark:text-yellow-400" : "text-emerald-600 dark:text-green-400"),
+        ? (weather.humidity > 80 ? "bg-[hsl(0,55%,50%)] dark:bg-red-500" : weather.humidity > 60 ? "bg-[hsl(25,55%,50%)] dark:bg-[hsl(25,55%,50%)]" : "bg-[hsl(150,55%,45%)] dark:bg-green-500")
+        : (weather.humidity > 80 ? "text-[hsl(0,55%,40%)] dark:text-red-400" : 
+           weather.humidity > 70 ? "text-[hsl(25,55%,40%)] dark:text-orange-400" : 
+           weather.humidity > 50 ? "text-[hsl(40,55%,35%)] dark:text-yellow-400" : "text-[hsl(150,55%,35%)] dark:text-green-400"),
       priority: 2,
     });
   }
@@ -686,14 +686,14 @@ function calculateDynamicStories(cityKey: string, weather: {
     title: "Umbrella Index",
     value: `${umbrellaIndex}/10`,
     type: "bar",
-    color: umbrellaIndex > 6 ? "bg-blue-600 dark:bg-blue-500" : umbrellaIndex > 3 ? "bg-blue-500 dark:bg-blue-400" : "bg-emerald-600 dark:bg-green-500",
+    color: umbrellaIndex > 6 ? "bg-[hsl(210,55%,50%)] dark:bg-[hsl(210,55%,50%)]" : umbrellaIndex > 3 ? "bg-[hsl(210,55%,50%)] dark:bg-[hsl(210,55%,60%)]" : "bg-[hsl(210,55%,60%)] dark:bg-blue-300",
     priority: umbrellaIndex > 6 ? 2 : 3, // Higher priority if rain likely
   });
 
   // Melbourne Tram Delays
   if (cityKey === "melbourne") {
     let tramDelay = "Low";
-    let tramColor = "text-emerald-600 dark:text-green-500";
+    let tramColor = "text-[hsl(150,55%,35%)] dark:text-green-500";
     let tramDelayScore = 0;
     
     if (weather.condition === "stormy") tramDelayScore += 4;
@@ -706,10 +706,10 @@ function calculateDynamicStories(cityKey: string, weather: {
     
     if (tramDelayScore >= 5) {
       tramDelay = "High";
-      tramColor = "text-red-600 dark:text-red-500";
+      tramColor = "text-[hsl(0,55%,40%)] dark:text-red-500";
     } else if (tramDelayScore >= 2) {
       tramDelay = "Moderate";
-      tramColor = "text-amber-600 dark:text-yellow-500";
+      tramColor = "text-[hsl(40,55%,35%)] dark:text-yellow-500";
     }
     
     stories.push({
@@ -730,7 +730,7 @@ function calculateDynamicStories(cityKey: string, weather: {
       title: "Fremantle Doctor",
       value: isDoctorTime ? "Blowing" : isAfternoon ? "Expected" : "Later",
       type: "text",
-      color: isDoctorTime ? "text-blue-600 dark:text-blue-500" : "text-slate-500 dark:text-gray-400",
+      color: isDoctorTime ? "text-[hsl(210,55%,40%)] dark:text-blue-500" : "text-[hsl(210,10%,40%)] dark:text-gray-400",
       priority: 3,
     });
   }
@@ -756,8 +756,8 @@ function calculateDynamicStories(cityKey: string, weather: {
       value: isPerth ? (beachScore >= 8 ? "Yes" : beachScore >= 5 ? "Maybe" : "No") : `${beachScore}/10`,
       type: isPerth ? "text" : "bar",
       color: isPerth 
-        ? (beachScore >= 8 ? "text-blue-600 dark:text-blue-500" : beachScore >= 5 ? "text-amber-600 dark:text-yellow-500" : "text-gray-500")
-        : (beachScore > 7 ? "bg-yellow-500" : beachScore > 4 ? "bg-orange-400" : "bg-gray-400"),
+        ? (beachScore >= 8 ? "text-[hsl(210,55%,40%)] dark:text-blue-500" : beachScore >= 5 ? "text-[hsl(40,55%,35%)] dark:text-yellow-500" : "text-gray-500")
+        : (beachScore > 7 ? "bg-[hsl(45,55%,50%)]" : beachScore > 4 ? "bg-[hsl(25,55%,50%)] dark:bg-orange-400" : "bg-[hsl(210,10%,60%)]"),
       priority: 4,
     });
   }
@@ -766,16 +766,16 @@ function calculateDynamicStories(cityKey: string, weather: {
   if (cityKey === "sydney" && weather.marineData) {
     const waveHeight = weather.marineData.wave_height;
     let surfCondition = "Flat";
-    let surfColor = "text-slate-500 dark:text-gray-400";
+    let surfColor = "text-[hsl(210,10%,40%)] dark:text-gray-400";
     if (waveHeight > 2.5) {
       surfCondition = "Epic";
-      surfColor = "text-emerald-600 dark:text-green-500";
+      surfColor = "text-[hsl(150,55%,35%)] dark:text-green-500";
     } else if (waveHeight > 1.5) {
       surfCondition = "Good";
-      surfColor = "text-blue-600 dark:text-blue-500";
+      surfColor = "text-[hsl(210,55%,40%)] dark:text-blue-500";
     } else if (waveHeight > 0.5) {
       surfCondition = "Okay";
-      surfColor = "text-amber-600 dark:text-yellow-500";
+      surfColor = "text-[hsl(40,55%,35%)] dark:text-yellow-500";
     }
     stories.push({
       title: "Surf Conditions",
@@ -800,7 +800,7 @@ function calculateDynamicStories(cityKey: string, weather: {
       title: "Hiking Conditions",
       value: hikingScore >= 7 ? "Excellent" : hikingScore >= 5 ? "Good" : hikingScore >= 3 ? "Fair" : "Poor",
       type: "text",
-      color: hikingScore >= 7 ? "text-emerald-600 dark:text-green-500" : hikingScore >= 5 ? "text-blue-600 dark:text-blue-500" : hikingScore >= 3 ? "text-amber-600 dark:text-yellow-500" : "text-red-600 dark:text-red-500",
+      color: hikingScore >= 7 ? "text-[hsl(150,55%,35%)] dark:text-green-500" : hikingScore >= 5 ? "text-[hsl(210,55%,40%)] dark:text-blue-500" : hikingScore >= 3 ? "text-[hsl(40,55%,35%)] dark:text-yellow-500" : "text-[hsl(0,55%,40%)] dark:text-red-500",
       priority: 4,
     });
 
@@ -821,7 +821,7 @@ function calculateDynamicStories(cityKey: string, weather: {
       title: "Fireplace Index",
       value: `${fireplaceIndex}/10`,
       type: "bar",
-      color: fireplaceIndex > 7 ? "bg-orange-600" : fireplaceIndex > 4 ? "bg-orange-400" : "bg-yellow-400",
+      color: fireplaceIndex > 7 ? "bg-[hsl(25,55%,40%)] dark:bg-[hsl(25,55%,50%)]" : fireplaceIndex > 4 ? "bg-[hsl(25,55%,50%)] dark:bg-orange-400" : "bg-[hsl(45,55%,50%)] dark:bg-yellow-400",
       priority: 4,
     });
   }
@@ -836,7 +836,7 @@ function calculateDynamicStories(cityKey: string, weather: {
       title: "Coffee Quality",
       value: "11/10",
       type: "bar",
-      color: "bg-amber-700",
+      color: "bg-[hsl(30,55%,35%)] dark:bg-amber-700",
       priority: 5,
     });
   }
@@ -847,14 +847,14 @@ function calculateDynamicStories(cityKey: string, weather: {
       title: "Isolation Level",
       value: "Maximum",
       type: "text",
-      color: "text-orange-600 dark:text-orange-500",
+      color: "text-[hsl(25,55%,40%)] dark:text-orange-500",
       priority: 5,
     });
     stories.push({
       title: "Mining Boom",
       value: "8/10",
       type: "bar",
-      color: "bg-yellow-600",
+      color: "bg-[hsl(45,55%,45%)] dark:bg-[hsl(45,55%,45%)]",
       priority: 5,
     });
   }
@@ -865,19 +865,19 @@ function calculateDynamicStories(cityKey: string, weather: {
     const isNight = hour >= 20 || hour <= 5;
     
     let auroraChance = "Low";
-    let auroraColor = "text-slate-500 dark:text-gray-400";
+    let auroraColor = "text-[hsl(210,10%,40%)] dark:text-gray-400";
     
     if (isWinter && weather.condition === "clear" && weather.cloudCover < 20) {
       if (isNight) {
         auroraChance = "Good";
-        auroraColor = "text-emerald-600 dark:text-green-500";
+        auroraColor = "text-[hsl(150,55%,35%)] dark:text-green-500";
       } else {
         auroraChance = "Possible";
-        auroraColor = "text-emerald-600 dark:text-green-400";
+        auroraColor = "text-[hsl(150,55%,35%)] dark:text-green-400";
       }
     } else if (weather.condition === "clear" && weather.cloudCover < 30) {
       auroraChance = "Low";
-      auroraColor = "text-amber-600 dark:text-yellow-400";
+      auroraColor = "text-[hsl(40,55%,35%)] dark:text-yellow-400";
     }
     
     stories.push({
@@ -893,7 +893,7 @@ function calculateDynamicStories(cityKey: string, weather: {
       title: "Oyster Quality",
       value: oysterSeason ? "Peak" : "Good",
       type: "text",
-      color: oysterSeason ? "text-teal-600 dark:text-teal-500" : "text-teal-600 dark:text-teal-400",
+      color: oysterSeason ? "text-[hsl(175,55%,35%)] dark:text-teal-500" : "text-[hsl(175,55%,35%)] dark:text-teal-400",
       priority: 5,
     });
   }
@@ -906,7 +906,7 @@ function calculateDynamicStories(cityKey: string, weather: {
         title: "Stinger Season",
         value: "Active",
         type: "text",
-        color: "text-red-600 dark:text-red-500",
+        color: "text-[hsl(0,55%,40%)] dark:text-red-500",
         priority: 2, // Health warning!
       });
     }
@@ -918,7 +918,7 @@ function calculateDynamicStories(cityKey: string, weather: {
       title: "Cats Pride",
       value: "Forever",
       type: "text",
-      color: "text-blue-600",
+      color: "text-[hsl(210,55%,40%)] dark:text-blue-500",
       priority: 5,
     });
   }
@@ -930,7 +930,7 @@ function calculateDynamicStories(cityKey: string, weather: {
       title: "Meter Maids",
       value: isWeekend ? "Busy" : "Around",
       type: "text",
-      color: "text-amber-600 dark:text-yellow-500",
+      color: "text-[hsl(40,55%,35%)] dark:text-yellow-500",
       priority: 5,
     });
   }
@@ -942,7 +942,7 @@ function calculateDynamicStories(cityKey: string, weather: {
       title: "Parliament Sitting",
       value: isWeekday ? "Likely" : "Recess",
       type: "text",
-      color: isWeekday ? "text-blue-600 dark:text-blue-500" : "text-slate-500 dark:text-gray-400",
+      color: isWeekday ? "text-[hsl(210,55%,40%)] dark:text-blue-500" : "text-[hsl(210,10%,40%)] dark:text-gray-400",
       priority: 5,
     });
   }
@@ -956,7 +956,7 @@ function calculateDynamicStories(cityKey: string, weather: {
       title: "Three Sisters View",
       value: visibility,
       type: "text",
-      color: weather.visibility > 5000 ? "text-emerald-600 dark:text-green-500" : "text-slate-500 dark:text-gray-400",
+      color: weather.visibility > 5000 ? "text-[hsl(150,55%,35%)] dark:text-green-500" : "text-[hsl(210,10%,40%)] dark:text-gray-400",
       priority: 4,
     });
   }

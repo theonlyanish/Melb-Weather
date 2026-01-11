@@ -55,12 +55,12 @@ function SidebarStories({ stories, cityName = "Melbourne" }: SidebarStoriesProps
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3 text-slate-600 dark:text-slate-300 font-medium font-sans theme-slow">
-                <div className={`p-2 rounded-full ${story.color.replace("bg-", "text-").replace("500", "600")} bg-opacity-10 dark:bg-opacity-20 theme-slow`}>
+                <div className={`p-2 rounded-full ${story.color.replace(/bg-/g, "text-").replace("500", "600")} bg-opacity-10 dark:bg-opacity-20 theme-slow`}>
                    {getIcon(story.title)}
                 </div>
                 <span>{story.title}</span>
               </div>
-              <span className={`font-bold ${story.color.replace("bg-", "text-")} theme-slow`}>{story.value}</span>
+              <span className={`font-bold ${story.color.replace(/bg-/g, "text-")} theme-slow`}>{story.value}</span>
             </div>
             
             {story.type === "bar" && (
