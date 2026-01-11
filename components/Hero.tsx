@@ -46,24 +46,24 @@ export default function Hero({ weather, microtext }: HeroProps) {
        case "hot":
          // Warm amber to soft blue for Light Mode
          // Dark Mode: Deep Charcoal/Black with subtle warmth
-         return "bg-gradient-to-br from-amber-200 via-orange-100 to-sky-200 dark:bg-none dark:bg-[#1A1C25]";
+         return "bg-gradient-to-br from-amber-200 via-orange-100 to-sky-200 dark:bg-none dark:bg-white/5 dark:backdrop-blur-md";
        case "rainy": 
          // Deep blue to indigo
          // Dark Mode: Deep Navy/Black
-         return "bg-gradient-to-br from-blue-300 via-indigo-300 to-slate-400 dark:bg-none dark:bg-[#1A1C25]";
+         return "bg-gradient-to-br from-blue-300 via-indigo-300 to-slate-400 dark:bg-none dark:bg-white/5 dark:backdrop-blur-md";
        case "stormy":
           // Purple to dark slate
           // Dark Mode: Deep Violet/Black
-          return "bg-gradient-to-br from-indigo-400 via-purple-400 to-slate-600 dark:bg-none dark:bg-[#1A1C25]";
+          return "bg-gradient-to-br from-indigo-400 via-purple-400 to-slate-600 dark:bg-none dark:bg-white/5 dark:backdrop-blur-md";
        case "cloudy": 
        case "overcast":
          // Silver to slate
          // Dark Mode: Deep Slate/Black
-         return "bg-gradient-to-br from-gray-200 via-slate-200 to-zinc-300 dark:bg-none dark:bg-[#1A1C25]";
+         return "bg-gradient-to-br from-gray-200 via-slate-200 to-zinc-300 dark:bg-none dark:bg-white/5 dark:backdrop-blur-md";
         case "snow":
-            return "bg-gradient-to-br from-slate-100 via-sky-100 to-blue-100 dark:bg-none dark:bg-[#1A1C25]";
+            return "bg-gradient-to-br from-slate-100 via-sky-100 to-blue-100 dark:bg-none dark:bg-white/5 dark:backdrop-blur-md";
        default: 
-         return "bg-gradient-to-br from-blue-200 to-blue-400 dark:bg-none dark:bg-[#1A1C25]";
+         return "bg-gradient-to-br from-blue-200 to-blue-400 dark:bg-none dark:bg-white/5 dark:backdrop-blur-md";
      }
   };
 
@@ -125,7 +125,7 @@ export default function Hero({ weather, microtext }: HeroProps) {
           transition={{ delay: 0.5 }}
           className="mt-8 flex flex-wrap justify-center gap-4 md:gap-6 text-base md:text-lg font-medium 
             px-6 md:px-8 py-4 rounded-full 
-            bg-white/40 dark:bg-[#15161E] 
+            bg-white/40 dark:bg-white/10 
             text-slate-700 dark:text-slate-300 
             border border-white/30 dark:border-white/5 
             shadow-lg dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] theme-slow"

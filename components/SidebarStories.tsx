@@ -42,7 +42,7 @@ function SidebarStories({ stories, cityName = "Melbourne" }: SidebarStoriesProps
   };
 
   return (
-    <div className="bg-white/90 dark:bg-[#15161E] rounded-[2rem] p-6 md:p-8 shadow-sm border border-slate-100 dark:border-white/5 h-full theme-slow">
+    <div className="bg-white/90 dark:bg-white/5 dark:backdrop-blur-md rounded-[2rem] p-6 md:p-8 shadow-sm border border-slate-100 dark:border-white/5 h-full theme-slow">
       <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 md:mb-8 font-display theme-slow">{cityName} Stories</h3>
       <div className="space-y-6 md:space-y-8">
         {stories.map((story, index) => (
