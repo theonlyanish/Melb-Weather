@@ -24,7 +24,8 @@ export default function Hero({ weather, microtext }: HeroProps) {
       case "hot":
         return <AnimatedSun className="w-32 h-32 md:w-40 md:h-40 text-yellow-400 drop-shadow-lg" />;
       case "rainy": 
-        return <AnimatedRain className="w-32 h-32 md:w-40 md:h-40 text-blue-200 drop-shadow-lg" />;
+        // Show just cloud icon since we have background rain animation
+        return <AnimatedCloud className="w-32 h-32 md:w-40 md:h-40 text-blue-200 drop-shadow-lg" />;
       case "stormy":
         return <AnimatedStorm className="w-32 h-32 md:w-40 md:h-40 text-purple-200 drop-shadow-lg" />;
       case "snow":

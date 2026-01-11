@@ -9,6 +9,7 @@ import CitySwitcher from "@/components/CitySwitcher";
 import { LocationData } from "@/data/types";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import RainAnimation from "@/components/RainAnimation";
 
 interface WeatherDashboardProps {
   initialData: LocationData | null;
@@ -84,6 +85,9 @@ function WeatherDashboard({ initialData, availableCities, defaultCity, regionalC
 
   return (
     <>
+      {/* Rain Animation - Background layer, only shows when definitely raining */}
+      <RainAnimation weather={locationData?.current || null} />
+      
       {/* Theme Switcher - Absolute Top Left */}
       <div className="absolute top-4 left-4 z-50 md:top-8 md:left-8">
         <ThemeToggle />
