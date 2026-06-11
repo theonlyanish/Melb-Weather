@@ -76,9 +76,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    // Add your verification codes here when available
-    // google: "your-google-verification-code",
-    // yandex: "your-yandex-verification-code",
+    google: "XyvtBzmh99mQjvdjWciohMyfIrXeexpSNXUXT89xx08",
   },
   // Canonical URLs are set per city page in app/[city]/page.tsx
   category: "Weather",
