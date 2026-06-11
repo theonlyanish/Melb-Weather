@@ -3,6 +3,7 @@ import { Epilogue, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
+import { SITE_URL } from "@/lib/site";
 
 const epilogue = Epilogue({
   variable: "--font-epilogue",
@@ -17,7 +18,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://localsky.app'),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "LocalSky - Australian Weather Forecast | Melbourne, Sydney, Brisbane & More",
     template: "%s | LocalSky"
@@ -55,20 +56,12 @@ export const metadata: Metadata = {
     siteName: "LocalSky",
     title: "LocalSky - Australian Weather Forecast",
     description: "Get accurate weather forecasts for Australian cities with real-time data, hourly forecasts, and local weather stories.",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "LocalSky - Australian Weather Forecast",
-      },
-    ],
+    // og:image comes from app/opengraph-image.tsx (generated dynamically)
   },
   twitter: {
     card: "summary_large_image",
     title: "LocalSky - Australian Weather Forecast",
     description: "Get accurate weather forecasts for Australian cities with real-time data and local weather stories.",
-    images: ["/og-image.png"],
     creator: "@anishkapse",
   },
   robots: {

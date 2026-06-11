@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import weatherData from "@/data/cities.json";
 import { WeatherData, LocationData } from "@/data/types";
 import { fetchWeatherData } from "@/lib/weatherService";
+import { SITE_URL } from "@/lib/site";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
@@ -26,35 +27,25 @@ export async function generateMetadata() {
       ? `Current weather in ${cityName}, ${state}: ${temp}°C, ${condition}. Get hourly and daily forecasts, air quality, and local weather stories.`
       : `Get accurate weather forecasts for ${cityName}, ${state}. Real-time weather data, hourly forecasts, and local weather stories with personality.`;
     
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://localsky.app';
-    
     return {
       title,
       description,
       openGraph: {
         title,
         description,
-        url: siteUrl,
+        url: SITE_URL,
         siteName: "LocalSky",
         locale: "en_AU",
         type: "website",
-        images: [
-          {
-            url: `${siteUrl}/og-image.png`,
-            width: 1200,
-            height: 630,
-            alt: `${cityName} Weather Forecast - LocalSky`,
-          },
-        ],
+        // og:image comes from app/opengraph-image.tsx (generated dynamically)
       },
       twitter: {
         card: "summary_large_image",
         title,
         description,
-        images: [`${siteUrl}/og-image.png`],
       },
       alternates: {
-        canonical: siteUrl,
+        canonical: SITE_URL,
       },
     };
   } catch (error) {
@@ -151,11 +142,6 @@ export default async function Home() {
       "price": "0",
       "priceCurrency": "AUD"
     },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "ratingCount": "1"
-    },
     ...(initialData && {
       "mainEntity": {
         "@type": "WeatherForecast",
@@ -184,8 +170,8 @@ export default async function Home() {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "LocalSky",
-    "url": process.env.NEXT_PUBLIC_SITE_URL || "https://localsky.app",
-    "logo": `${process.env.NEXT_PUBLIC_SITE_URL || "https://localsky.app"}/logo.png`,
+    "url": SITE_URL,
+    "logo": `${SITE_URL}/android-chrome-512x512.png`,
     "sameAs": [
       "https://anishkapse.com"
     ],

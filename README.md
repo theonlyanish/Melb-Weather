@@ -72,7 +72,7 @@ Optional:
 Example:
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://localsky.app
+NEXT_PUBLIC_SITE_URL=https://localsky.vercel.app
 ```
 
 ## Project structure
