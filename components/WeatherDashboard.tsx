@@ -1,5 +1,6 @@
 "use client";
-import { useState, useCallback, useTransition, memo } from "react";
+import { useCallback, useTransition, memo } from "react";
+import { useRouter } from "next/navigation";
 import RegionalCitySelector from "@/components/SuburbSelector";
 import Hero from "@/components/Hero";
 import HourlyScroll from "@/components/HourlyScroll";
@@ -14,7 +15,8 @@ import RainAnimation from "@/components/RainAnimation";
 interface WeatherDashboardProps {
   initialData: LocationData | null;
   availableCities: string[];
-  defaultCity: string;
+  majorCityKey: string;
+  currentCityName: string;
   regionalCities: string[];
 }
 
@@ -26,73 +28,35 @@ function capitalizeCityName(city: string): string {
     .join(' ');
 }
 
-function WeatherDashboard({ initialData, availableCities, defaultCity, regionalCities }: WeatherDashboardProps) {
-  const [selectedMajorCity, setSelectedMajorCity] = useState(defaultCity);
-  const [locationData, setLocationData] = useState<LocationData | null>(initialData);
-  const [currentRegionalCities, setCurrentRegionalCities] = useState(regionalCities);
-  // Default to the major city itself (capitalized), not the first regional city
-  const [selectedRegionalCity, setSelectedRegionalCity] = useState(capitalizeCityName(defaultCity));
+// "Gold Coast" -> "/gold-coast"
+function cityNameToPath(city: string): string {
+  return `/${city.toLowerCase().trim().replace(/\s+/g, "-")}`;
+}
+
+function WeatherDashboard({ initialData, availableCities, majorCityKey, currentCityName, regionalCities }: WeatherDashboardProps) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
 
-  const handleMajorCityChange = useCallback(async (majorCity: string) => {
-    setSelectedMajorCity(majorCity);
-    setError(null);
-    
-    startTransition(async () => {
-      try {
-        // Fetch the major city data to get regional cities list
-        const stateResponse = await fetch(`/api/weather?city=${majorCity.toLowerCase()}&type=state`);
-        if (!stateResponse.ok) throw new Error("Failed to fetch state data");
-        
-        const stateData = await stateResponse.json();
-        setCurrentRegionalCities(stateData.regionalCities || []);
-        
-        // Fetch weather for the major city itself
-        const response = await fetch(`/api/weather?city=${majorCity.toLowerCase()}`);
-        if (!response.ok) throw new Error("Failed to fetch");
-        
-        const data: LocationData = await response.json();
-        setLocationData(data);
-        // Set to capitalized major city name to match the regional cities format
-        setSelectedRegionalCity(capitalizeCityName(majorCity));
-      } catch (err) {
-        console.error("Error fetching weather:", err);
-        setError("Failed to load weather data.");
-      }
+  // Each city is its own route, so switching is a navigation. The server
+  // renders the new city's data and metadata; no client-side fetching needed.
+  const navigateToCity = useCallback((city: string) => {
+    startTransition(() => {
+      router.push(cityNameToPath(city));
     });
-  }, []);
+  }, [router]);
 
-  const handleRegionalCityChange = useCallback(async (regionalCity: string) => {
-    setSelectedRegionalCity(regionalCity);
-    setError(null);
-    
-    startTransition(async () => {
-      try {
-        // Normalize city name for API (lowercase, spaces preserved)
-        const cityParam = encodeURIComponent(regionalCity.toLowerCase());
-        const response = await fetch(`/api/weather?city=${cityParam}`);
-        if (!response.ok) throw new Error("Failed to fetch");
-        
-        const data: LocationData = await response.json();
-        setLocationData(data);
-      } catch (err) {
-        console.error("Error fetching weather:", err);
-        setError("Failed to load weather data.");
-      }
-    });
-  }, []);
+  const locationData = initialData;
 
   return (
     <>
       {/* Rain Animation - Background layer, only shows when definitely raining */}
       <RainAnimation weather={locationData?.current || null} />
-      
+
       {/* Theme Switcher - Absolute Top Left */}
       <div className="absolute top-4 left-4 z-50 md:top-8 md:left-8">
         <ThemeToggle />
       </div>
-      
+
       {/* Loading Overlay - Only for city switching */}
       {isPending && <LoadingSpinner message="Fetching forecast..." />}
 
@@ -100,33 +64,27 @@ function WeatherDashboard({ initialData, availableCities, defaultCity, regionalC
         <header className="relative pb-4 md:pb-8">
           <div className="flex flex-col items-center md:flex-row md:items-center justify-between gap-4 pt-4">
             <div className="space-y-2 text-center md:text-left">
-              <CitySwitcher 
-                cities={availableCities} 
-                selectedCity={selectedMajorCity} 
-                onSelect={handleMajorCityChange} 
+              <CitySwitcher
+                cities={availableCities}
+                selectedCity={majorCityKey}
+                onSelect={navigateToCity}
               />
               <p className="text-slate-500 dark:text-slate-400 font-medium tracking-wide uppercase text-xs font-sans">
                 {new Date().toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}
               </p>
             </div>
-            
-            {currentRegionalCities.length > 0 && (
+
+            {regionalCities.length > 0 && (
               <div className="md:self-end w-full md:w-auto flex justify-center md:block">
-                <RegionalCitySelector 
-                  regionalCities={[capitalizeCityName(selectedMajorCity), ...currentRegionalCities]} 
-                  selectedCity={selectedRegionalCity} 
-                  onSelect={handleRegionalCityChange} 
+                <RegionalCitySelector
+                  regionalCities={[capitalizeCityName(majorCityKey), ...regionalCities]}
+                  selectedCity={currentCityName}
+                  onSelect={navigateToCity}
                 />
               </div>
             )}
           </div>
         </header>
-
-        {error && (
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-2xl p-4 text-yellow-800 dark:text-yellow-200 text-sm font-sans">
-            {error}
-          </div>
-        )}
 
         <div className={`grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 transition-opacity duration-200 ${isPending ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
           <div className="lg:col-span-2 space-y-6 md:space-y-8">
@@ -150,13 +108,13 @@ function WeatherDashboard({ initialData, availableCities, defaultCity, regionalC
             {locationData && <SidebarStories stories={locationData.stories} cityName={locationData.name} />}
           </aside>
         </div>
-        
+
         <footer className="text-center text-sm py-12 font-sans text-slate-400 dark:text-slate-500">
           LocalSky by{" "}
-          <a 
-            href="https://anishkapse.com/" 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <a
+            href="https://anishkapse.com/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="font-medium transition-colors duration-200 hover:text-[rgb(218,65,103)]"
           >
             Anish Kapse
@@ -168,4 +126,3 @@ function WeatherDashboard({ initialData, availableCities, defaultCity, regionalC
 }
 
 export default memo(WeatherDashboard);
-

@@ -12,6 +12,16 @@ const nextConfig: NextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
+  // The homepage is the default city; a 308 keeps one canonical URL per city
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/melbourne',
+        permanent: true,
+      },
+    ];
+  },
   // Headers for security and SEO
   async headers() {
     return [

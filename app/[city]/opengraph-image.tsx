@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { fetchWeatherData } from "@/lib/weatherService";
-import weatherData from "@/data/cities.json";
+import { resolveCity, getCityMicrotext } from "@/lib/cities";
 
 export const alt = "LocalSky - Australian Weather Forecast";
 export const size = {
@@ -19,20 +19,26 @@ function pickMicrotext(lines: string[]): string {
   return lines[dayOfYear % lines.length];
 }
 
-export default async function OpengraphImage() {
-  const cityMicrotext =
-    (weatherData as { cityMicrotext?: Record<string, string[]> }).cityMicrotext
-      ?.melbourne || [];
-  const tagline = pickMicrotext(cityMicrotext);
+export default async function OpengraphImage({
+  params,
+}: {
+  params: Promise<{ city: string }>;
+}) {
+  const { city } = await params;
+  const resolved = resolveCity(city);
+  const cityName = resolved?.displayName || "Australia";
+  const tagline = pickMicrotext(resolved ? getCityMicrotext(resolved) : []);
 
   let temp: number | null = null;
   let condition = "";
-  try {
-    const live = await fetchWeatherData("melbourne");
-    temp = live.current.temp;
-    condition = live.current.condition;
-  } catch {
-    // No live data — render the brand card without the temperature block
+  if (resolved) {
+    try {
+      const live = await fetchWeatherData(resolved.cityKey);
+      temp = live.current.temp;
+      condition = live.current.condition;
+    } catch {
+      // No live data — render the brand card without the temperature block
+    }
   }
 
   const conditionLabel = condition
@@ -111,14 +117,14 @@ export default async function OpengraphImage() {
               }}
             >
               <div style={{ fontSize: 48, fontWeight: 700, color: "#0f172a" }}>
-                Melbourne
+                {cityName}
               </div>
               <div style={{ fontSize: 36, color: "#475569" }}>{conditionLabel}</div>
             </div>
           </div>
         ) : (
           <div style={{ fontSize: 88, fontWeight: 800, color: "#1d4ed8" }}>
-            Melbourne · Sydney · Brisbane · Perth · Hobart
+            {cityName}
           </div>
         )}
 

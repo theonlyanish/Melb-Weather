@@ -1,20 +1,16 @@
 import { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/site';
+import { getAllCityKeys, cityKeyToSlug } from '@/lib/cities';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  // Main page
-  const routes: MetadataRoute.Sitemap = [
-    {
-      url: SITE_URL,
+  // One URL per city. "/" 308-redirects to /melbourne, so it isn't listed.
+  return getAllCityKeys().map((key) => {
+    const slug = cityKeyToSlug(key);
+    return {
+      url: `${SITE_URL}/${slug}`,
       lastModified: new Date(),
-      changeFrequency: 'hourly',
-      priority: 1,
-    },
-  ];
-
-  // Add city-specific pages if you plan to have them
-  // For now, we'll just include the main page since it's a single-page app
-  // You can expand this later if you add city-specific routes
-
-  return routes;
+      changeFrequency: 'hourly' as const,
+      priority: slug === 'melbourne' ? 1 : 0.8,
+    };
+  });
 }

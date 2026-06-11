@@ -80,7 +80,7 @@ NEXT_PUBLIC_SITE_URL=https://localsky.vercel.app
 ```text
 app/
   api/weather/route.ts      API route for weather lookups
-  page.tsx                  server-rendered entry page
+  [city]/page.tsx           server-rendered city page (one route per city)
 components/
   WeatherDashboard.tsx      main client dashboard
   Hero.tsx                  current conditions hero panel

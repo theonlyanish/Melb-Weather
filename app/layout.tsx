@@ -80,9 +80,7 @@ export const metadata: Metadata = {
     // google: "your-google-verification-code",
     // yandex: "your-yandex-verification-code",
   },
-  alternates: {
-    canonical: "/",
-  },
+  // Canonical URLs are set per city page in app/[city]/page.tsx
   category: "Weather",
   icons: {
     icon: [
